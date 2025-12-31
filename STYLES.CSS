@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #fafafa;
+}
+
+#viewer {
+    position: relative;
+    display: inline-block;
+    border: 2px solid #ccc;
+    padding: 8px;
+}
+
+canvas {
+    border: 1px solid #000;
+}
+
+.note-marker {
+    width: 12px;
+    height: 12px;
+    background: #0099ff;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+.note-marker:hover {
+    transform: scale(1.2);
+}
+
+.note-popup {
+    position: absolute;
+    padding: 10px;
+    background: #fff;
+    color: #000;
+    border-radius: 6px;
+    border: 1px solid #0099ff;
+    max-width: 200px;
+    font-size: 14px;
+    z-index: 1000;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Steganography PDF Notes Viewer</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      padding: 10px;
+    }
+
+    #viewer {
+      position: relative;
+      display: inline-block;
+      border: 2px solid #bbb;
+      padding: 6px;
+      background: #fff;
+      margin-top: 10px;
+      pointer-events: none;
+    }
+
+    #viewer * {
+      pointer-events: auto;
+    }
+
+    .note-marker {
+      width: 18px;
+      height: 18px;
+      background: #00aaff;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      position: absolute;
+      cursor: grab;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+      z-index: 50;
+    }
+
+    .note-popup {
+      position: absolute;
+      background: white;
+      border: 1px solid #00aaff;
+      padding: 8px;
+      border-radius: 6px;
+      max-width: 240px;
+      z-index: 9999;
+    }
+
+    #dropZone {
+      width: 300px;
+      height: 160px;
+      border: 3px dashed #09f;
+      border-radius: 10px;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      margin: 10px auto;
+      background: #e8f7ff;
+      cursor: pointer;
+    }
+
+    #dropZone.show {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>📄 Steganography PDF Notes Viewer (Text + Image Support)</h2>
+  <input type="file" id="pdfUpload" accept="application/pdf" />
+
+  <p>📌 Click on the PDF to add a hidden note (Text or Image).</p>
+
+  <div id="dropZone">📥 Drop Image Here or Click to Pick</div>
+
+  <div id="viewer"></div>
+
+  <!-- LOCAL PDF.js -->
+  <script src="pdf.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js";
+  </script>
+
+  <script src="app.js"></script>
+
+</body>
+
+</html>

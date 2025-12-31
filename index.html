@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Steganography PDF Notes Viewer</title>
+  <title>Stego PDF Notes Viewer (Text + Image + Audio)</title>
 
   <style>
     body {
@@ -17,7 +17,6 @@
       margin-bottom: 10px;
     }
 
-    /* 📄 PDF Container (Smooth Scroll) */
     #viewer {
       max-height: 90vh;
       overflow-y: auto;
@@ -25,7 +24,6 @@
       padding: 10px;
       background: white;
       scroll-behavior: smooth;
-      /* ⭐ Smooth scroll */
     }
 
     .pageWrapper {
@@ -33,7 +31,6 @@
       margin-bottom: 25px;
     }
 
-    /* 🎯 Hidden note marker */
     .note-marker {
       width: 18px;
       height: 18px;
@@ -46,7 +43,6 @@
       box-shadow: 0 0 5px #0085cc;
     }
 
-    /* 🧩 Menu Popup */
     .menuBox {
       position: absolute;
       padding: 8px;
@@ -57,72 +53,84 @@
     }
 
     .menuBox button {
-      margin: 5px 3px;
-      padding: 4px 10px;
+      margin: 3px;
+      padding: 3px 8px;
       cursor: pointer;
     }
 
-    /* 💬 Reveal note popup */
     .note-popup {
       position: absolute;
       background: #ffffe6;
       border: 1px solid #e3d700;
-      padding: 6px 10px;
+      padding: 5px 8px;
       border-radius: 6px;
       z-index: 999;
       max-width: 250px;
     }
 
-    /* 🖼️ Revealed image */
     .revealImage {
       position: absolute;
-      max-width: 220px;
+      max-width: 240px;
       border: 2px solid #0099ff;
       border-radius: 6px;
       z-index: 999;
     }
 
-    /* 📥 Drag & drop zone */
     #dropZone {
-      width: 300px;
-      height: 150px;
+      width: 260px;
+      height: 120px;
       border: 3px dashed #00aaff;
       border-radius: 12px;
       display: none;
       justify-content: center;
       align-items: center;
-      margin: 12px auto;
       background: #e8f7ff;
       cursor: pointer;
+      margin: 15px auto;
       font-size: 16px;
+      text-align: center;
     }
 
     #dropZone.show {
       display: flex;
+    }
+
+    #savePdfBtn {
+      margin: 10px 0;
+      padding: 6px 12px;
+      cursor: pointer;
+      background: #00aaff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    #savePdfBtn:hover {
+      background: #0085cc;
     }
   </style>
 </head>
 
 <body>
 
-  <h2>📄 Steganography PDF Notes Viewer</h2>
+  <h2>Stego PDF Editor — Text | Image | Audio</h2>
   <input type="file" id="pdfUpload" accept="application/pdf">
+  <button id="savePdfBtn">💾 Save PDF</button>
 
-  <p>📌 Click on any page to add a hidden Text or Image note.</p>
-
+  <p>Click on any PDF page → Add Text / Image / Audio note</p>
   <div id="dropZone">📥 Drop Image Here or Click to Pick</div>
-
   <div id="viewer"></div>
 
   <!-- PDF.js -->
   <script src="pdf.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js";
-  </script>
+  <script> pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.worker.js"; </script>
 
-  <!-- Your JS -->
+  <!-- PDF-Lib + Opus Recorder -->
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib/dist/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opus-media-recorder@latest/OpusMediaRecorder.min.js"></script>
+
+  <!-- App JS -->
   <script src="app.js"></script>
-
 </body>
 
 </html>

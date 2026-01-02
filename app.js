@@ -229,64 +229,80 @@ async function recordAudio(p, x, y, wrap) {
 function addMarker(pageNum, x, y, type, content, wrap, isNew) {
   const m = document.createElement("div");
   m.className = "note-marker";
-  m.style = `left:${x - 12}px; top:${y - 12}px;`;
+  // Initial positioning
+  m.style.left = `${x - 12}px`;
+  m.style.top = `${y - 12}px`;
   m.dataset.type = type;
-
   m.cachedContent = content;
 
-  // Track if we are dragging to prevent accidental "clicks"
   let isDragging = false;
+  let startX, startY;
 
+  // Handle Clicking to Reveal
   m.onclick = (e) => {
     e.stopPropagation();
-    // Only reveal if we weren't just moving the dot
     if (!isDragging) {
       revealMarker(m, wrap);
     }
   };
 
+  // Handle Dragging to Move
   m.onmousedown = function (event) {
-    if (event.button !== 0) return;
+    if (event.button !== 0) return; // Only left click drags
 
-    isDragging = false; // Reset dragging state on new click
-    let startX = event.clientX;
-    let startY = event.clientY;
+    isDragging = false;
+    startX = event.clientX;
+    startY = event.clientY;
 
+    const rect = wrap.getBoundingClientRect();
     let shiftX = event.clientX - m.getBoundingClientRect().left;
     let shiftY = event.clientY - m.getBoundingClientRect().top;
 
     function moveAt(pageX, pageY) {
-      const rect = wrap.getBoundingClientRect();
       let newX = pageX - rect.left - shiftX;
       let newY = pageY - rect.top - shiftY;
+
+      // Boundary checks to keep marker inside the page
+      newX = Math.max(0, Math.min(newX, rect.width - 24));
+      newY = Math.max(0, Math.min(newY, rect.height - 24));
+
       m.style.left = newX + 'px';
       m.style.top = newY + 'px';
     }
 
     function onMouseMove(event) {
-      // If mouse moves more than 3 pixels, consider it a drag
-      if (Math.abs(event.clientX - startX) > 3 || Math.abs(event.clientY - startY) > 3) {
+      // If mouse moves more than 5 pixels, it's a drag, not a click
+      if (Math.abs(event.clientX - startX) > 5 || Math.abs(event.clientY - startY) > 5) {
         isDragging = true;
+        moveAt(event.clientX, event.clientY);
       }
-      moveAt(event.clientX, event.clientY);
     }
 
+    // Attach to document so it doesn't "lose" the marker if you move fast
     document.addEventListener('mousemove', onMouseMove);
 
-    m.onmouseup = function () {
+    // DROP LOGIC
+    document.onmouseup = function () {
       document.removeEventListener('mousemove', onMouseMove);
+      document.onmouseup = null; // Clean up document listener
 
-      const finalX = parseInt(m.style.left) + 12;
-      const finalY = parseInt(m.style.top) + 12;
+      if (isDragging) {
+        const finalX = parseInt(m.style.left) + 12;
+        const finalY = parseInt(m.style.top) + 12;
 
-      updateMarkerPosition(pageNum, x, y, finalX, finalY);
+        // Save new position to global object
+        updateMarkerPosition(pageNum, x, y, finalX, finalY);
 
-      x = finalX;
-      y = finalY;
+        // Update local scope variables for future moves
+        x = finalX;
+        y = finalY;
 
-      // Small delay to ensure the 'click' event handler knows we were dragging
+        statusMsg.textContent = "📍 Marker dropped and fixed.";
+        statusMsg.style.color = "#28a745";
+      }
+
+      // Prevent click from firing immediately after a long drag
       setTimeout(() => { isDragging = false; }, 100);
-      m.onmouseup = null;
     };
   };
 

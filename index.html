@@ -29,9 +29,9 @@
     }
 
     #viewer {
-      width: 100%;
-      max-width: 1000px;
-      height: 80vh;
+      width: 90%;
+      max-width: 950px;
+      height: 100vh;
       overflow-y: auto;
       border: 1px solid #ccc;
       background: #525659;
@@ -49,28 +49,28 @@
     }
 
     .note-marker {
-  width: 24px;
-  height: 24px;
-  background: radial-gradient(circle, #ff5f6d, #ff3e3e);
-  border-radius: 50%;
-  border: 2px solid white;
-  position: absolute;
-  cursor: grab;
-  z-index: 100;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle, #ff5f6d, #ff3e3e);
+      border-radius: 50%;
+      border: 2px solid white;
+      position: absolute;
+      cursor: grab;
+      z-index: 100;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-.note-marker:hover {
-  transform: scale(1.15);
-}
+    .note-marker:hover {
+      transform: scale(1.15);
+    }
 
-.note-marker:active {
-  cursor: grabbing;
-}
+    .note-marker:active {
+      cursor: grabbing;
+    }
 
     /* Popups & Menus */
     .menuBox {
@@ -165,12 +165,12 @@
     <br>
     <div id="statusMsg"></div>
     <br>
-  <div id="viewer">
-  </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
-  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <script src="app.js"></script>
+    <div id="viewer">
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="app.js"></script>
 </body>
 
 </html>

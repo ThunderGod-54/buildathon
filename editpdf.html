@@ -219,6 +219,60 @@
             }
         }
 
+        /* Video Loader Styles */
+        #videoLoader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            background: #0F172A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-loader-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loader-progress {
+            width: 80%;
+            max-width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loader-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #0099ff);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
         /* Content Layer */
         .content-wrapper {
             position: relative;
@@ -228,6 +282,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.98);
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .content-wrapper.reveal {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .header-container {
@@ -242,6 +304,15 @@
             margin-bottom: 20px;
             text-align: center;
             transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal .header-container {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.4s;
         }
 
         .header-container h2 {
@@ -264,7 +335,7 @@
             color: var(--accent-green);
         }
 
-        /* Theme Toggle Button */
+        /* FIXED: Theme Toggle Button - ALWAYS VISIBLE */
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -278,10 +349,15 @@
             cursor: pointer;
             box-shadow: 0 4px 15px var(--shadow-color);
             transition: all 0.3s ease;
+            transform: translateX(0);
+            opacity: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .theme-toggle:hover {
-            transform: translateY(-2px);
+            transform: translateY(-2px) scale(1.05);
             box-shadow: 0 6px 20px var(--shadow-color);
         }
 
@@ -289,7 +365,30 @@
             width: 24px;
             height: 24px;
             stroke: var(--text-primary);
-            transition: stroke 0.4s ease;
+            fill: none;
+            stroke-width: 2;
+            transition: stroke 0.4s ease, transform 0.3s ease;
+        }
+
+        .theme-toggle:hover svg {
+            transform: rotate(30deg);
+        }
+
+        /* Icon visibility control */
+        #sunIcon {
+            display: block;
+        }
+
+        #moonIcon {
+            display: none;
+        }
+
+        .dark-theme #sunIcon {
+            display: none;
+        }
+
+        .dark-theme #moonIcon {
+            display: block;
         }
 
         #viewer {
@@ -304,6 +403,15 @@
             border-radius: 16px;
             box-shadow: 0 8px 32px var(--shadow-color);
             transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .reveal #viewer {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.6s;
         }
 
         /* Skeleton Loader */
@@ -727,69 +835,31 @@
         #viewer::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
         }
-
-        /* Entrance Animation Classes */
-        .shutter-open .shutter-half.left {
-            transform: translateX(-100%);
-        }
-
-        .shutter-open .shutter-half.right {
-            transform: translateX(100%);
-        }
-
-        .content-wrapper {
-            opacity: 0;
-            transform: translateY(30px) scale(0.98);
-            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .content-wrapper.reveal {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        /* Staggered children reveal */
-        .header-container,
-        #viewer {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .reveal .header-container {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.4s;
-        }
-
-        .reveal #viewer {
-            opacity: 1;
-            transform: translateY(0);
-            transition-delay: 0.6s;
-        }
-
-        /* Micro-interaction for theme toggle */
-        .theme-toggle {
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: translateX(100px);
-            /* Start off-screen */
-        }
-
-        .reveal .theme-toggle {
-            transform: translateX(0);
-            transition-delay: 0.8s;
-        }
     </style>
 </head>
-<div id="entranceShutter"
-    style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; display:flex; pointer-events:none;">
-    <div class="shutter-half left"
-        style="flex:1; background:#0F172A; transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);"></div>
-    <div class="shutter-half right"
-        style="flex:1; background:#0F172A; transition: transform 1.2s cubic-bezier(0.85, 0, 0.15, 1);"></div>
-</div>
-
 <body class="light-theme">
+    <!-- Video Loader -->
+    <div id="videoLoader">
+        <video class="loader-video" id="loaderVideo" autoplay muted playsinline>
+            <source src="assets/loader.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="video-loader-content">
+            <div id="loaderText">Loading Stego PDF Editor...</div>
+            <div class="loader-progress">
+                <div class="loader-progress-bar" id="loaderProgress"></div>
+            </div>
+            <div class="loader-click-hint" id="clickHint" style="display: none;">
+                🔊 Click anywhere to enable audio
+            </div>
+        </div>
+        <button class="loader-mute-btn" id="muteBtn" style="display: none;">
+            <svg viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
+            </svg>
+        </button>
+    </div>
+
     <!-- Premium Animated Background -->
     <div class="bg-container">
         <div class="grid-overlay"></div>
@@ -808,7 +878,7 @@
         </div>
     </div>
 
-    <!-- Theme Toggle -->
+    <!-- FIXED: Theme Toggle - ALWAYS VISIBLE -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
         <svg id="sunIcon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">
@@ -822,8 +892,8 @@
             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
         </svg>
-        <svg id="moonIcon" style="display: none;" viewBox="0 0 24 24" fill="none" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
+        <svg id="moonIcon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
         </svg>
     </button>
@@ -906,7 +976,231 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <script src="app.js"></script>
+    <script>
+        // Video Loader Animation
+        document.addEventListener('DOMContentLoaded', function () {
+            const videoLoader = document.getElementById('videoLoader');
+            const loaderVideo = document.getElementById('loaderVideo');
+            const loaderProgress = document.getElementById('loaderProgress');
+            const loaderText = document.getElementById('loaderText');
+            const clickHint = document.getElementById('clickHint');
+            const muteBtn = document.getElementById('muteBtn');
+            const contentWrapper = document.querySelector('.content-wrapper');
+
+            // Remove loop attribute if it exists (for one-time play)
+            loaderVideo.removeAttribute('loop');
+
+            // Set video volume to 0 initially (muted)
+            loaderVideo.volume = 0;
+
+            // Force video to play with audio capabilities
+            const playVideoWithAudio = () => {
+                loaderVideo.muted = false;
+                loaderVideo.volume = 0.5; // Set to 50% volume
+
+                const playPromise = loaderVideo.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // Video is playing with audio
+                        console.log("Video playing with audio");
+                        clickHint.style.display = 'none';
+                        muteBtn.style.display = 'flex';
+
+                        // Update mute button icon
+                        muteBtn.innerHTML = `
+                            <svg viewBox="0 0 24 24">
+                                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                            </svg>
+                        `;
+                    }).catch(error => {
+                        console.log("Autoplay with audio prevented:", error);
+                        // Show hint that user needs to interact
+                        clickHint.style.display = 'block';
+                        loaderText.textContent = "Click to enable audio";
+
+                        // Set up click handler for entire page
+                        const enableAudioOnClick = () => {
+                            loaderVideo.play().then(() => {
+                                loaderVideo.muted = false;
+                                loaderVideo.volume = 0.5;
+                                clickHint.style.display = 'none';
+                                muteBtn.style.display = 'flex';
+                                document.removeEventListener('click', enableAudioOnClick);
+                            }).catch(e => {
+                                console.log("Still blocked after click");
+                            });
+                        };
+
+                        document.addEventListener('click', enableAudioOnClick);
+                    });
+                }
+            };
+
+            // Start video with muted autoplay first
+            loaderVideo.muted = true;
+            loaderVideo.play().then(() => {
+                // Video is playing (muted)
+                console.log("Video playing (muted)");
+
+                // After 500ms, try to enable audio
+                setTimeout(() => {
+                    playVideoWithAudio();
+                }, 500);
+
+            }).catch(error => {
+                console.log("Even muted autoplay prevented:", error);
+                // Show manual play button
+                loaderText.textContent = "Click to play loader video";
+                clickHint.textContent = "Click anywhere to start";
+                clickHint.style.display = 'block';
+
+                const startOnClick = () => {
+                    playVideoWithAudio();
+                    document.removeEventListener('click', startOnClick);
+                };
+
+                document.addEventListener('click', startOnClick);
+            });
+
+            // Handle video end event
+            loaderVideo.addEventListener('ended', function () {
+                console.log("Video ended");
+                // If video ends before loading completes, hide it
+                hideVideoLoader();
+            });
+
+            // Handle video errors
+            loaderVideo.addEventListener('error', function () {
+                console.error("Error loading video");
+                createFallbackAnimation();
+            });
+
+            // Mute button functionality
+            muteBtn.addEventListener('click', function () {
+                if (loaderVideo.muted) {
+                    loaderVideo.muted = false;
+                    loaderVideo.volume = 0.5;
+                    this.innerHTML = `
+                        <svg viewBox="0 0 24 24">
+                            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                        </svg>
+                    `;
+                } else {
+                    loaderVideo.muted = true;
+                    this.innerHTML = `
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    `;
+                }
+            });
+
+            // Simulate loading progress
+            let progress = 0;
+            const progressInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+
+                    // Update text when complete
+                    loaderText.textContent = "Ready!";
+
+                    // Wait for video to finish or proceed after 3 seconds
+                    const videoDuration = loaderVideo.duration;
+                    const currentTime = loaderVideo.currentTime;
+
+                    if (!isNaN(videoDuration) && currentTime < videoDuration - 1) {
+                        // Video still has time, wait for it to finish
+                        setTimeout(hideVideoLoader, (videoDuration - currentTime) * 1000);
+                    } else {
+                        // Video already ended or very short, proceed
+                        setTimeout(hideVideoLoader, 1000);
+                    }
+                }
+                loaderProgress.style.width = progress + '%';
+            }, 150);
+
+            function hideVideoLoader() {
+                videoLoader.style.opacity = '0';
+                setTimeout(() => {
+                    videoLoader.style.display = 'none';
+                    contentWrapper.classList.add('reveal');
+                    initThemeToggle();
+                }, 800);
+            }
+
+            function createFallbackAnimation() {
+                videoLoader.style.background = 'linear-gradient(135deg, #0F172A, #1E293B)';
+
+                const fallbackAnimation = document.createElement('div');
+                fallbackAnimation.innerHTML = `
+                    <style>
+                        @keyframes fallbackSpin {
+                            0% { transform: rotate(0deg); }
+                            100% { transform: rotate(360deg); }
+                        }
+                        .fallback-spinner {
+                            width: 80px;
+                            height: 80px;
+                            border: 4px solid rgba(0, 212, 255, 0.3);
+                            border-radius: 50%;
+                            border-top-color: #00d4ff;
+                            animation: fallbackSpin 1s linear infinite;
+                            margin-bottom: 20px;
+                        }
+                    </style>
+                    <div class="fallback-spinner"></div>
+                `;
+                videoLoader.querySelector('.video-loader-content').prepend(fallbackAnimation);
+            }
+        });
+
+        // Theme toggle functionality
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('stego-pdf-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                document.body.classList.add('dark-theme');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+
+            // Theme toggle click handler
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.body.classList.contains('dark-theme');
+
+                // Toggle theme
+                document.body.classList.toggle('dark-theme');
+
+                // Update icons
+                if (isDark) {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                    localStorage.setItem('stego-pdf-theme', 'light');
+                } else {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                    localStorage.setItem('stego-pdf-theme', 'dark');
+                }
+
+                // Add button click animation
+                themeToggle.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    themeToggle.style.transform = 'scale(1)';
+                }, 200);
+            });
+        }
     </script>
 </body>
 

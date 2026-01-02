@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StegoPDF | Stealth Protocol</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <style>
+        :root {
+            --bg-deep: #020617;
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+            --accent-blue: #38bdf8;
+            --accent-emerald: #10B981;
+            --glass: rgba(30, 41, 59, 0.4);
+            --text-white: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-white);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+
+        /* --- Background Animation --- */
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            z-index: -1;
+        }
+
+        /* --- Sections --- */
+        section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+        }
+
+        section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Hero --- */
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 5rem;
+            letter-spacing: -4px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h1 span {
+            color: var(--accent-blue);
+        }
+
+        /* --- Features Grid (3D Cards) --- */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .card-3d {
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.1s ease;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .card-3d:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .card-3d h3 {
+            color: var(--accent-emerald);
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .card-3d p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        /* --- Waves --- */
+        .wave-container {
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+            line-height: 0;
+        }
+
+        .waves {
+            width: 100%;
+            height: 100%;
+        }
+
+        .parallax>use {
+            animation: move-forever 25s cubic-bezier(.55, .5, .45, .5) infinite;
+        }
+
+        @keyframes move-forever {
+            0% {
+                transform: translate3d(-90px, 0, 0);
+            }
+
+            100% {
+                transform: translate3d(85px, 0, 0);
+            }
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #010409;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-launch {
+            background: var(--accent-blue);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            color: black;
+            font-weight: 800;
+            display: inline-block;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-mesh"></div>
+
+    <section class="hero is-visible">
+        <div class="hero-content">
+            <h1 id="title">Stego<span>PDF</span></h1>
+            <p>Next-Gen Steganography for the Security Conscious.</p>
+            <a href="index.html" class="btn-launch">LAUNCH INTERFACE</a>
+        </div>
+    </section>
+
+    <div class="wave-container">
+        <svg class="waves" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(56, 189, 248, 0.3)" />
+                <use xlink:href="#gentle-wave" x="48" y="7" fill="rgba(56, 189, 248, 0.5)" />
+            </g>
+        </svg>
+    </div>
+
+    <section id="features">
+        <div class="features-grid">
+            <div class="card-3d">
+                <h3>01. Deep Stealth</h3>
+                <p>Data is embedded within the binary metadata layer of the PDF, making it invisible to standard
+                    readers.</p>
+            </div>
+            <div class="card-3d">
+                <h3>02. Multi-Media</h3>
+                <p>Hide high-resolution images and compressed audio artifacts with lossless recovery protocols.</p>
+            </div>
+            <div class="card-3d">
+                <h3>03. Draggable UI</h3>
+                <p>Interactive marker placement allows you to map hidden data to specific visual regions of the
+                    document.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 StegoPDF Protocol. Secure. Invisible. Permanent.</p>
+        <div style="margin-top: 20px; color: #38bdf8; font-size: 0.8rem;">ENGINEERED BY 3D WEB DESIGN SYSTEMS</div>
+    </footer>
+
+    <script>
+        // Scroll Animation Logic (Lando Norris style entry)
+        const observerOptions = { threshold: 0.2 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section').forEach(section => observer.observe(section));
+
+        // 3D Card Tilt Effect
+        const cards = document.querySelectorAll('.card-3d');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = (y - centerY) / 10;
+                const rotateY = (centerX - x) / 10;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+            });
+        });
+
+        // Hero Title Text Animation
+        anime({
+            targets: '#title',
+            translateY: [-50, 0],
+            opacity: [0, 1],
+            easing: 'easeOutExpo',
+            duration: 2000,
+            delay: 500
+        });
+    </script>
+</body>
+
+</html>

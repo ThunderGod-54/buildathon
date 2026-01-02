@@ -750,3 +750,45 @@ document.getElementById('audioModal').addEventListener('click', (e) => {
     cancelAudioRecording();
   }
 });
+window.addEventListener('DOMContentLoaded', () => {
+  const shutter = document.getElementById('entranceShutter');
+  const content = document.querySelector('.content-wrapper');
+
+  // Smooth delay before starting the reveal
+  setTimeout(() => {
+    // 1. Open the Shutters
+    document.body.classList.add('shutter-open');
+
+    // 2. Reveal the main content with a staggered scale
+    content.classList.add('reveal');
+
+    // 3. Cleanup the shutter to free up memory/events
+    setTimeout(() => {
+      shutter.style.display = 'none';
+    }, 1200);
+  }, 300);
+});
+
+// Optional: Add a "Scanning" effect when a PDF is first rendered
+function triggerScanEffect() {
+  const viewer = document.getElementById('viewer');
+  const scanLine = document.createElement('div');
+  scanLine.style = `
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 2px;
+        background: var(--accent-cyan);
+        box-shadow: 0 0 15px var(--accent-cyan);
+        z-index: 1000;
+        pointer-events: none;
+    `;
+  viewer.appendChild(scanLine);
+
+  anime({
+    targets: scanLine,
+    top: ['0%', '100%'],
+    opacity: [1, 0],
+    easing: 'easeInOutQuad',
+    duration: 2000,
+    complete: () => scanLine.remove()
+  });
+}

@@ -19,6 +19,7 @@ let recordingSeconds = 0;
 let tempRecordingData = null;
 
 // Theme Toggle
+// Theme Toggle
 const themeToggle = document.getElementById('themeToggle');
 const sunIcon = document.getElementById('sunIcon');
 const moonIcon = document.getElementById('moonIcon');
@@ -427,7 +428,11 @@ function addMarker(pageNum, x, y, type, content, wrap, isNew) {
 
   if (isNew) {
     if (!pageMarkers[pageNum]) pageMarkers[pageNum] = [];
-    pageMarkers[pageNum].push({ x: Math.round(x), y: Math.round(y), type, content });
+    const markerData = { x: Math.round(x), y: Math.round(y), type, content };
+    if (type === "image") {
+      markerData.size = { width: 250, height: 250 };
+    }
+    pageMarkers[pageNum].push(markerData);
   }
 }
 
@@ -460,30 +465,71 @@ function revealMarker(m, wrap) {
 
   if (type === "text") {
     display.innerHTML = `
-          <div style="margin-bottom:5px; font-weight:bold;">📝 Hidden Text:</div>
-          <div style="max-height:200px; overflow-y:auto; word-break: break-all; white-space: pre-wrap;">${content}</div>
+          <div class="note-popup-header">📝 Hidden Text:</div>
+          <div class="note-popup-content">${content}</div>
         `;
   } else if (type === "image") {
     const blob = new Blob([content], { type: "image/jpeg" });
     const url = URL.createObjectURL(blob);
+
+    // Find marker data
+    const pageNum = parseInt(wrap.id.split('-')[1]);
+    const markerX = parseInt(m.style.left) + 12;
+    const markerY = parseInt(m.style.top) + 12;
+    const marker = pageMarkers[pageNum].find(mark => mark.x === markerX && mark.y === markerY && mark.type === 'image');
+    const size = marker ? marker.size : { width: 250, height: 250 };
+
     display.innerHTML = `
-          <div style="margin-bottom:5px; font-weight:bold;">🖼️ Hidden Image:</div>
-          <img src="${url}" style="max-width:250px; max-height:250px; border-radius:4px;">
+          <div class="note-popup-header">🖼️ Hidden Image:</div>
+          <div class="note-popup-content">
+            <img src="${url}" style="width:${size.width}px; height:${size.height}px; border-radius:4px; resize: both; overflow: hidden;">
+          </div>
         `;
+
+    // Adjust size to fit image if default size
+    const img = display.querySelector('img');
+    img.onload = () => {
+      if (size.width === 250 && size.height === 250) {
+        img.style.width = img.naturalWidth + 'px';
+        img.style.height = img.naturalHeight + 'px';
+        if (marker) {
+          marker.size = { width: img.naturalWidth, height: img.naturalHeight };
+        }
+      }
+    };
   } else if (type === "audio") {
     const blob = new Blob([content], { type: "audio/webm" });
     const url = URL.createObjectURL(blob);
     display.innerHTML = `
-          <div style="margin-bottom:5px; font-weight:bold;">🎤 Hidden Audio:</div>
-          <audio src="${url}" controls style="width:250px; height:40px;"></audio>
+          <div class="note-popup-header">🎤 Hidden Audio:</div>
+          <div class="note-popup-content">
+            <audio src="${url}" controls style="width:250px; height:40px;"></audio>
+          </div>
         `;
   }
 
   const closeBtn = document.createElement("button");
-  closeBtn.innerHTML = "✕ Close";
-  closeBtn.style = `margin-top:10px; padding:4px 12px; background:#6c757d; color:white; border:none; border-radius:4px; cursor:pointer; font-size:12px; width: 100%;`;
+  closeBtn.innerHTML = "✕";
+  closeBtn.style = `position:absolute; top:10px; right:10px; padding:4px 8px; background:#6c757d; color:white; border:none; border-radius:4px; cursor:pointer; font-size:14px; font-weight:bold;`;
   closeBtn.onclick = (e) => {
     e.stopPropagation();
+
+    // Save image size if resized
+    if (type === "image") {
+      const img = display.querySelector('img');
+      if (img) {
+        const newWidth = img.clientWidth;
+        const newHeight = img.clientHeight;
+        const pageNum = parseInt(wrap.id.split('-')[1]);
+        const markerX = parseInt(m.style.left) + 12;
+        const markerY = parseInt(m.style.top) + 12;
+        const marker = pageMarkers[pageNum].find(mark => mark.x === markerX && mark.y === markerY && mark.type === 'image');
+        if (marker) {
+          marker.size = { width: newWidth, height: newHeight };
+        }
+      }
+    }
+
     display.remove();
   };
   display.appendChild(closeBtn);
@@ -529,7 +575,12 @@ saveBtn.onclick = async () => {
           }
           const base64Data = btoa(binary);
 
-          metadataEntries.push(`${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}`);
+          if (m.type === "image") {
+            const size = m.size || { width: 250, height: 250 };
+            metadataEntries.push(`${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}|${size.width}|${size.height}`);
+          } else {
+            metadataEntries.push(`${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}`);
+          }
         }
       }
     }
@@ -693,16 +744,25 @@ async function restoreMarkers() {
             continue;
           }
 
+          let size = null;
+          if (type === "image" && parts.length >= 7) {
+            size = { width: parseInt(parts[5]), height: parseInt(parts[6]) };
+          }
+
           addMarker(pageIndex, absX, absY, type, binaryData, wrap, false);
           restoredCount++;
 
           if (!pageMarkers[pageIndex]) pageMarkers[pageIndex] = [];
-          pageMarkers[pageIndex].push({
+          const markerData = {
             x: absX,
             y: absY,
             type: type,
             content: binaryData
-          });
+          };
+          if (type === "image") {
+            markerData.size = size || { width: 250, height: 250 };
+          }
+          pageMarkers[pageIndex].push(markerData);
 
           console.log(`Restored ${type}`);
         } catch (error) {

@@ -47,7 +47,7 @@
             --bg-primary: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #0f1419 100%);
             --bg-secondary: rgba(255, 255, 255, 0.05);
             --bg-viewer: rgba(30, 35, 45, 0.6);
-            --text-primary: #00d4ff;
+            --text-primary: #ffffff;
             --text-secondary: rgba(255, 255, 255, 0.8);
             --border-color: rgba(255, 255, 255, 0.1);
             --shadow-color: rgba(0, 0, 0, 0.3);
@@ -490,20 +490,25 @@
         /* ===== HEADER ===== */
         .note-popup-header {
             padding: 14px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.35px;
-            color: #0f172a;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+            border-bottom: 2px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px 8px 0 0;
         }
 
         /* ===== CONTENT ===== */
         .note-popup-content {
-            padding: 4px 18px 16px;
+            padding: 16px 18px;
             max-height: 240px;
             overflow-y: auto;
             white-space: pre-wrap;
             word-break: break-word;
+            line-height: 1.6;
+            color: var(--text-primary);
+            font-size: 14px;
         }
 
         /* ===== CLEAN SCROLLBAR ===== */
@@ -710,7 +715,7 @@
         }
 
         .modal-btn-primary {
-            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            background: linear-gradient(135deg, #ffffff, #0099ff);
             color: white;
         }
 
@@ -728,86 +733,94 @@
             background: rgba(108, 117, 125, 0.3);
         }
 
-        /* Container for the button */
-.recording-container {
-    text-align: center;
-    padding: 20px;
-}
+        /* Audio Recording Modal */
+        .recording-container {
+            text-align: center;
+            padding: 20px;
+        }
 
-/* The Premium Button */
-.recording-button {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    /* Vibrant Coral to Orange gradient */
-    background: linear-gradient(135deg, #ff4b2b, #ff416c);
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 30px auto;
-    
-    /* Layered shadows for a "floating" effect */
-    box-shadow: 
-        0 10px 25px rgba(255, 75, 43, 0.3),
-        inset 0 -4px 10px rgba(0, 0, 0, 0.1),
-        inset 0 4px 10px rgba(255, 255, 255, 0.2);
-    
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    outline: none;
-}
+        /* The Premium Button */
+        .recording-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            /* Vibrant Coral to Orange gradient */
+            background: linear-gradient(135deg, #ff4b2b, #ff416c);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
 
-/* Hover State */
-.recording-button:hover {
-    transform: scale(1.08) translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 75, 43, 0.5);
-    filter: brightness(1.1);
-}
+            /* Layered shadows for a "floating" effect */
+            box-shadow:
+                0 10px 25px rgba(255, 75, 43, 0.3),
+                inset 0 -4px 10px rgba(0, 0, 0, 0.1),
+                inset 0 4px 10px rgba(255, 255, 255, 0.2);
 
-/* Active/Click State */
-.recording-button:active {
-    transform: scale(0.95);
-}
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            outline: none;
+        }
 
-/* SVG Icon Styling */
-.recording-button svg {
-    width: 48px;
-    height: 48px;
-    color: white; /* Controls stroke color */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
-    transition: transform 0.3s ease;
-}
+        /* Hover State */
+        .recording-button:hover {
+            transform: scale(1.08) translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 75, 43, 0.5);
+            filter: brightness(1.1);
+        }
 
-/* Animation when the 'recording' class is added via JS */
-.recording-button.recording {
-    animation: premiumPulse 2s infinite;
-    background: linear-gradient(135deg, #ff0000, #ff4b2b);
-}
+        /* Active/Click State */
+        .recording-button:active {
+            transform: scale(0.95);
+        }
 
-.recording-button.recording svg {
-    animation: iconShake 0.5s infinite alternate;
-}
+        /* SVG Icon Styling */
+        .recording-button svg {
+            width: 48px;
+            height: 48px;
+            color: white;
+            /* Controls stroke color */
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
 
-/* The Pulse Effect */
-@keyframes premiumPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.7), 0 10px 25px rgba(255, 75, 43, 0.3);
-    }
-    70% {
-        box-shadow: 0 0 0 25px rgba(255, 75, 43, 0), 0 10px 25px rgba(255, 75, 43, 0.3);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(255, 75, 43, 0), 0 10px 25px rgba(255, 75, 43, 0.3);
-    }
-}
+        /* Animation when the 'recording' class is added via JS */
+        .recording-button.recording {
+            animation: premiumPulse 2s infinite;
+            background: linear-gradient(135deg, #ff0000, #ff4b2b);
+        }
 
-/* Subtle icon vibration while recording */
-@keyframes iconShake {
-    from { transform: scale(1); }
-    to { transform: scale(1.1); }
-}
+        .recording-button.recording svg {
+            animation: iconShake 0.5s infinite alternate;
+        }
+
+        /* The Pulse Effect */
+        @keyframes premiumPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 43, 0.7), 0 10px 25px rgba(255, 75, 43, 0.3);
+            }
+
+            70% {
+                box-shadow: 0 0 0 25px rgba(255, 75, 43, 0), 0 10px 25px rgba(255, 75, 43, 0.3);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 75, 43, 0), 0 10px 25px rgba(255, 75, 43, 0.3);
+            }
+        }
+
+        /* Subtle icon vibration while recording */
+        @keyframes iconShake {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.1);
+            }
+        }
 
         /* Scrollbar */
         #viewer::-webkit-scrollbar {
@@ -986,17 +999,17 @@
                 <div class="recording-status" id="recordStatus">Click to start recording</div>
                 <div class="recording-time" id="recordTime">00:00</div>
                 <button class="recording-button" id="recordButton">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
-                        stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                         <!-- Mic body -->
                         <rect x="9" y="2" width="6" height="12" rx="3" />
-                    
+
                         <!-- Mic stand -->
                         <path d="M5 10v2a7 7 0 0 0 14 0v-2" />
-                    
+
                         <!-- Stem -->
                         <line x1="12" y1="19" x2="12" y2="22" />
-                    
+
                         <!-- Base -->
                         <line x1="8" y1="22" x2="16" y2="22" />
                     </svg>

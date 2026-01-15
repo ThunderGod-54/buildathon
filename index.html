@@ -561,7 +561,7 @@
         TAP ANYWHERE TO SKIP
       </div>
     </div>
-  
+
     <video id="protocol-video" style="display: none; width: 100%; height: 100%; object-fit: cover;">
       <source src="assets/loader.mp4" type="video/mp4">
     </video>
@@ -679,8 +679,7 @@
           <div class="tech-tag">RAG-Powered Document Intelligence</div>
         </div>
         <div class="feature-visual">
-          <img
-            src="https://i.pinimg.com/1200x/97/5a/27/975a27d9abb7f181155205df952fbe5c.jpg"
+          <img src="https://i.pinimg.com/1200x/97/5a/27/975a27d9abb7f181155205df952fbe5c.jpg"
             alt="AI Context Visualization" class="feature-image">
           <div class="image-overlay"></div>
         </div>
@@ -865,15 +864,15 @@
       });
     });
     // Initialization Logic
-      const launchBtn = document.querySelector('.btn-launch');
-      const initOverlay = document.getElementById('init-overlay');
-      const loaderBar = document.getElementById('loader-bar');
-      const loaderText = document.getElementById('loader-text');
-      const loaderPct = document.getElementById('loader-percentage');
-      const video = document.getElementById('protocol-video');
-      const loaderVisual = document.getElementById('loader-visual');
-      let chipShown = false;
-  launchBtn.addEventListener('click', (e) => {
+    const launchBtn = document.querySelector('.btn-launch');
+    const initOverlay = document.getElementById('init-overlay');
+    const loaderBar = document.getElementById('loader-bar');
+    const loaderText = document.getElementById('loader-text');
+    const loaderPct = document.getElementById('loader-percentage');
+    const video = document.getElementById('protocol-video');
+    const loaderVisual = document.getElementById('loader-visual');
+    let chipShown = false;
+    launchBtn.addEventListener('click', (e) => {
       e.preventDefault(); // Prevent immediate navigation
 
       // 1. Reveal Overlay
@@ -992,5 +991,4 @@
     });
   </script>
 </body>
-
 </html>

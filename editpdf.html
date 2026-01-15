@@ -782,40 +782,49 @@
 
             animation: glassIn 0.16s ease-out;
         }
-/*header*/
-        .note-popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: left;
-    padding: 14px 16px;
-    font-size: 20px;
-    font-weight: 690;
-    color: black;
-    border-bottom: 2px solid var(--border-color);
-}
 
-#copyBtn:hover svg {
-    transform: scale(1.1);
-    opacity: 0.8;
-}
-/* Update the content area to allow manual resizing */
-.note-popup-content {
-    padding: 10px;
-    overflow: hidden; /* Required for the resize handle to function */
-    resize: both;    /* Enables the drag handle in the corner */
-    min-width: 150px;
-    min-height: 100px;
-    max-width: 90vw;
-    display: block;
-    cursor: nwse-resize; /* Diagonal resize cursor for UX */
-}
-.note-popup-content img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: contain; /* Prevents stretching of the hidden image */
-    display: block;
-    pointer-events: none; /* Prevents the image from blocking the resize handle */
-}
+        /*header*/
+        .note-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: left;
+            padding: 14px 16px;
+            font-size: 20px;
+            font-weight: 690;
+            color: black;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        #copyBtn:hover svg {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        /* Update the content area to allow manual resizing */
+        .note-popup-content {
+            padding: 10px;
+            overflow: hidden;
+            /* Required for the resize handle to function */
+            resize: both;
+            /* Enables the drag handle in the corner */
+            min-width: 150px;
+            min-height: 100px;
+            max-width: 90vw;
+            display: block;
+            cursor: nwse-resize;
+            /* Diagonal resize cursor for UX */
+        }
+
+        .note-popup-content img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain;
+            /* Prevents stretching of the hidden image */
+            display: block;
+            pointer-events: none;
+            /* Prevents the image from blocking the resize handle */
+        }
+
         /* ===== CLEAN SCROLLBAR ===== */
         .note-popup-content::-webkit-scrollbar {
             width: 5px;
@@ -842,22 +851,23 @@
                 transform: none;
             }
         }
+
         /* Custom Styling for the Deep Blue Chatbot Button */
-.btn-chatbot {
-    background: linear-gradient(135deg, #100c5c, #2a24a3);
-    color: white;
-}
+        .btn-chatbot {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
+            color: white;
+        }
 
-.btn-chatbot:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(16, 12, 92, 0.4);
-    filter: brightness(1.2);
-}
+        .btn-chatbot:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(16, 12, 92, 0.4);
+            filter: brightness(1.2);
+        }
 
-/* Ensure the star SVG looks premium */
-.btn-chatbot svg {
-    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
-}
+        /* Ensure the star SVG looks premium */
+        .btn-chatbot svg {
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+        }
 
         /* Premium Buttons */
         .toolbar {
@@ -1058,28 +1068,32 @@
             text-align: center;
             padding: 20px;
         }
+
         /* Update the recording status and time colors */
-.recording-status {
-    color: var(--text-primary); /* Automatically white in dark-theme, dark in light-theme */
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 5px;
-    transition: color 0.4s ease;
-}
+        .recording-status {
+            color: var(--text-primary);
+            /* Automatically white in dark-theme, dark in light-theme */
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 5px;
+            transition: color 0.4s ease;
+        }
 
-.recording-time {
-    color: var(--accent-cyan); /* Use your existing cyan variable for the timer */
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+        .recording-time {
+            color: var(--accent-cyan);
+            /* Use your existing cyan variable for the timer */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-/* Ensure the modal content background follows the theme */
-#audioModal .modal-content {
-    background: var(--bg-secondary);
-    color: var(--text-primary);
-}
+        /* Ensure the modal content background follows the theme */
+        #audioModal .modal-content {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
         /* The Premium Button */
         .recording-button {
             width: 120px;
@@ -1401,7 +1415,8 @@
                     <span>View Stego File</span>
                 </button>
                 <button class="btn btn-chatbot" onclick="toggleChatbot()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 0L14.59 7.41L22 10L14.59 12.59L12 20L9.41 12.59L2 10L9.41 7.41L12 0Z" />
                     </svg>
                     <span>Chatbot</span>
@@ -1470,7 +1485,8 @@
                 <span>Record Audio Message</span>
             </div>
             <div class="recording-container">
-                <div class="recording-status" id="recordStatus" style="color: var(--text-primary);">Click to start recording
+                <div class="recording-status" id="recordStatus" style="color: var(--text-primary);">Click to start
+                    recording
                 </div>
                 <div class="recording-time" id="recordTime"
                     style="color: var(--accent-cyan); font-weight: bold; font-family: monospace; font-size: 1.2rem; margin: 10px 0;">
@@ -1504,8 +1520,5 @@
             mainContent.classList.toggle('chatbot-visible');
         }
     </script>
-
-
 </body>
-
 </html>

@@ -2,8 +2,9 @@
 /* STEGO PDF VIEWER — DEEP STEALTH + TEXT COMPRESSION VERSION       */
 /********************************************************************/
 
-const pdfjsLib = window['pdfjs-dist/build/pdf'];
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const pdfjsLib = window["pdfjs-dist/build/pdf"];
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 const viewer = document.getElementById("viewer");
 const saveBtn = document.getElementById("savePdfBtn");
@@ -23,43 +24,47 @@ let maxZoom = 3.0;
 let zoomTimeout = null;
 let currentDisplayedWidth = 0;
 let currentDisplayedHeight = 0;
-let pdfTextContent = ''; // Store extracted PDF text for chatbot context
+let pdfTextContent = ""; // Store extracted PDF text for chatbot context
 let isSnippingMode = false;
 let snipStartX = 0;
 let snipStartY = 0;
 let snipRect = null;
 
 // Replace your existing zoom functions with these:
-function zoomIn() { setZoom(currentZoom * 1.06); }
-function zoomOut() { setZoom(currentZoom / 1.06); }
+function zoomIn() {
+  setZoom(currentZoom * 1.06);
+}
+function zoomOut() {
+  setZoom(currentZoom / 1.06);
+}
 
 function setZoom(zoomLevel) {
   const oldZoom = currentZoom;
   currentZoom = Math.max(minZoom, Math.min(maxZoom, zoomLevel));
   const ratio = currentZoom / oldZoom;
 
-  const wraps = document.querySelectorAll('.pageWrapper');
-  wraps.forEach(wrap => {
+  const wraps = document.querySelectorAll(".pageWrapper");
+  wraps.forEach((wrap) => {
     // Get current dimensions from style or offset
     const currentW = parseFloat(wrap.style.width) || wrap.offsetWidth;
     const currentH = parseFloat(wrap.style.height) || wrap.offsetHeight;
 
     // 1. Update wrapper size smoothly (CSS transition handles the animation)
-    wrap.style.width = (currentW * ratio) + 'px';
-    wrap.style.height = (currentH * ratio) + 'px';
+    wrap.style.width = currentW * ratio + "px";
+    wrap.style.height = currentH * ratio + "px";
 
     // 2. Move markers along with the zoom ratio
-    const markers = wrap.querySelectorAll('.note-marker');
-    markers.forEach(m => {
+    const markers = wrap.querySelectorAll(".note-marker");
+    markers.forEach((m) => {
       const mLeft = parseFloat(m.style.left) || 0;
       const mTop = parseFloat(m.style.top) || 0;
 
       // Use +12 to find the marker center, multiply by ratio, then -12 to re-offset
-      const newX = ((mLeft + 12) * ratio) - 12;
-      const newY = ((mTop + 12) * ratio) - 12;
+      const newX = (mLeft + 12) * ratio - 12;
+      const newY = (mTop + 12) * ratio - 12;
 
-      m.style.left = newX + 'px';
-      m.style.top = newY + 'px';
+      m.style.left = newX + "px";
+      m.style.top = newY + "px";
     });
   });
 
@@ -76,7 +81,7 @@ function throttledReRender() {
 
 async function reRenderPages() {
   if (!pdfDoc) return;
-  const wraps = document.querySelectorAll('.pageWrapper');
+  const wraps = document.querySelectorAll(".pageWrapper");
 
   for (let i = 0; i < wraps.length; i++) {
     const wrap = wraps[i];
@@ -85,7 +90,7 @@ async function reRenderPages() {
     const vp = page.getViewport({ scale: currentZoom });
 
     // FIX FOR VANISHING CONTENT: Update canvas resolution to match current zoom
-    const canvas = wrap.querySelector('canvas');
+    const canvas = wrap.querySelector("canvas");
     canvas.width = vp.width;
     canvas.height = vp.height;
 
@@ -96,44 +101,54 @@ async function reRenderPages() {
   }
 }
 // Mouse wheel zoom (Ctrl + scroll for zoom)
-viewer.addEventListener('wheel', (e) => {
-  if (e.ctrlKey) {
-    e.preventDefault();
-    if (e.deltaY < 0) {
-      zoomIn();
-    } else {
-      zoomOut();
+viewer.addEventListener(
+  "wheel",
+  (e) => {
+    if (e.ctrlKey) {
+      e.preventDefault();
+      if (e.deltaY < 0) {
+        zoomIn();
+      } else {
+        zoomOut();
+      }
     }
-  }
-}, { passive: false });
+  },
+  { passive: false }
+);
 
 // Touch zoom
 let initialDistance = null;
 let initialZoom = null;
 
-viewer.addEventListener('touchstart', (e) => {
+viewer.addEventListener("touchstart", (e) => {
   if (e.touches.length === 2) {
     e.preventDefault();
     const touch1 = e.touches[0];
     const touch2 = e.touches[1];
-    initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+    initialDistance = Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
     initialZoom = currentZoom;
   }
 });
 
-viewer.addEventListener('touchmove', (e) => {
+viewer.addEventListener("touchmove", (e) => {
   if (e.touches.length === 2 && initialDistance !== null) {
     e.preventDefault();
     const touch1 = e.touches[0];
     const touch2 = e.touches[1];
-    const currentDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+    const currentDistance = Math.hypot(
+      touch2.clientX - touch1.clientX,
+      touch2.clientY - touch1.clientY
+    );
     const zoomFactor = currentDistance / initialDistance;
     const newZoom = initialZoom * zoomFactor;
     setZoom(newZoom);
   }
 });
 
-viewer.addEventListener('touchend', (e) => {
+viewer.addEventListener("touchend", (e) => {
   if (e.touches.length < 2) {
     initialDistance = null;
     initialZoom = null;
@@ -142,46 +157,46 @@ viewer.addEventListener('touchend', (e) => {
 
 // Theme Toggle
 // Theme Toggle
-const themeToggle = document.getElementById('themeToggle');
-const sunIcon = document.getElementById('sunIcon');
-const moonIcon = document.getElementById('moonIcon');
+const themeToggle = document.getElementById("themeToggle");
+const sunIcon = document.getElementById("sunIcon");
+const moonIcon = document.getElementById("moonIcon");
 
-themeToggle.addEventListener('click', () => {
+themeToggle.addEventListener("click", () => {
   // Add animation class
-  themeToggle.classList.add('animate');
+  themeToggle.classList.add("animate");
 
   // Toggle theme classes
-  document.body.classList.toggle('dark-theme');
-  document.body.classList.toggle('light-theme');
+  document.body.classList.toggle("dark-theme");
+  document.body.classList.toggle("light-theme");
 
   // Fade icons using opacity
-  if (document.body.classList.contains('dark-theme')) {
-    sunIcon.style.opacity = '0';
-    moonIcon.style.opacity = '1';
+  if (document.body.classList.contains("dark-theme")) {
+    sunIcon.style.opacity = "0";
+    moonIcon.style.opacity = "1";
   } else {
-    sunIcon.style.opacity = '1';
-    moonIcon.style.opacity = '0';
+    sunIcon.style.opacity = "1";
+    moonIcon.style.opacity = "0";
   }
 
   // Remove animation class after animation completes
   setTimeout(() => {
-    themeToggle.classList.remove('animate');
+    themeToggle.classList.remove("animate");
   }, 600);
   // Updated Fade + Display logic
-  if (document.body.classList.contains('dark-theme')) {
+  if (document.body.classList.contains("dark-theme")) {
     // Hide Sun, Show Moon
-    sunIcon.style.display = 'none';
-    sunIcon.style.opacity = '0';
+    sunIcon.style.display = "none";
+    sunIcon.style.opacity = "0";
 
-    moonIcon.style.display = 'block';
-    setTimeout(() => moonIcon.style.opacity = '1', 10);
+    moonIcon.style.display = "block";
+    setTimeout(() => (moonIcon.style.opacity = "1"), 10);
   } else {
     // Hide Moon, Show Sun
-    moonIcon.style.display = 'none';
-    moonIcon.style.opacity = '0';
+    moonIcon.style.display = "none";
+    moonIcon.style.opacity = "0";
 
-    sunIcon.style.display = 'block';
-    setTimeout(() => sunIcon.style.opacity = '1', 10);
+    sunIcon.style.display = "block";
+    setTimeout(() => (sunIcon.style.opacity = "1"), 10);
   }
 });
 
@@ -198,7 +213,9 @@ function showSkeletonLoader() {
 /**************** HELPER: COMPRESS/DECOMPRESS *********************/
 async function compressText(text) {
   try {
-    const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'));
+    const stream = new Blob([text])
+      .stream()
+      .pipeThrough(new CompressionStream("gzip"));
     const response = new Response(stream);
     const buffer = await response.arrayBuffer();
     return btoa(String.fromCharCode(...new Uint8Array(buffer)));
@@ -210,8 +227,10 @@ async function compressText(text) {
 
 async function decompressText(base64) {
   try {
-    const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    const stream = new Blob([bytes])
+      .stream()
+      .pipeThrough(new DecompressionStream("gzip"));
     return await new Response(stream).text();
   } catch (error) {
     console.warn("Decompression failed, trying plain text:", error);
@@ -225,12 +244,12 @@ async function decompressText(base64) {
 
 /*************************** LOAD PDF ********************************/
 
-document.getElementById("pdfUpload").onchange = async e => {
+document.getElementById("pdfUpload").onchange = async (e) => {
   handlePdfLoad(e.target.files[0], "PDF Loaded. Deep Stealth mode active.");
 };
 
 if (stegoViewUpload) {
-  stegoViewUpload.onchange = async e => {
+  stegoViewUpload.onchange = async (e) => {
     handlePdfLoad(e.target.files[0], "Scanning for hidden data...", true);
   };
 }
@@ -245,9 +264,11 @@ async function handlePdfLoad(file, successMsg, isViewMode = false) {
   const reader = new FileReader();
   reader.onload = async (event) => {
     try {
-      const base64String = event.target.result.split(',')[1];
+      const base64String = event.target.result.split(",")[1];
       pdfBase64 = base64String;
-      const viewerBytes = Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
+      const viewerBytes = Uint8Array.from(atob(base64String), (c) =>
+        c.charCodeAt(0)
+      );
       pdfDoc = await pdfjsLib.getDocument({ data: viewerBytes }).promise;
       viewer.innerHTML = "";
       pageMarkers = {};
@@ -283,7 +304,7 @@ async function handlePdfLoad(file, successMsg, isViewMode = false) {
 }
 
 async function renderAllPages() {
-  pdfTextContent = ''; // Reset text content
+  pdfTextContent = ""; // Reset text content
 
   for (let p = 1; p <= pdfDoc.numPages; p++) {
     try {
@@ -301,16 +322,18 @@ async function renderAllPages() {
       wrap.appendChild(canvas);
       viewer.appendChild(wrap);
 
-      await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      await page.render({
+        canvasContext: canvas.getContext("2d"),
+        viewport: vp,
+      }).promise;
 
       // Extract text content from the page
       const textContent = await page.getTextContent();
-      const pageText = textContent.items.map(item => item.str).join(' ');
+      const pageText = textContent.items.map((item) => item.str).join(" ");
       pdfTextContent += `Page ${p}: ${pageText}\n\n`;
 
       canvas.onclick = (e) => openPopupMenu(e, wrap, p);
       pageMarkers[p] = [];
-
     } catch (error) {
       console.error(`Error rendering page ${p}:`, error);
     }
@@ -327,18 +350,18 @@ let currentTextContext = null;
 
 function openTextModal(pageNum, x, y, wrap) {
   currentTextContext = { pageNum, x, y, wrap };
-  document.getElementById('textModal').classList.add('active');
-  document.getElementById('textInput').value = '';
-  document.getElementById('textInput').focus();
+  document.getElementById("textModal").classList.add("active");
+  document.getElementById("textInput").value = "";
+  document.getElementById("textInput").focus();
 }
 
 function closeTextModal() {
-  document.getElementById('textModal').classList.remove('active');
+  document.getElementById("textModal").classList.remove("active");
   currentTextContext = null;
 }
 
 function saveTextMessage() {
-  const text = document.getElementById('textInput').value.trim();
+  const text = document.getElementById("textInput").value.trim();
   if (text && currentTextContext) {
     const { pageNum, x, y, wrap } = currentTextContext;
     addMarker(pageNum, x, y, "text", text, wrap, true);
@@ -353,90 +376,97 @@ let currentAudioContext = null;
 
 function openAudioModal(pageNum, x, y, wrap) {
   currentAudioContext = { pageNum, x, y, wrap };
-  document.getElementById('audioModal').classList.add('active');
-  document.getElementById('recordStatus').textContent = 'Click to start recording';
-  document.getElementById('recordTime').textContent = '00:00';
-  document.getElementById('recordButton').classList.remove('recording');
+  document.getElementById("audioModal").classList.add("active");
+  document.getElementById("recordStatus").textContent =
+    "Click to start recording";
+  document.getElementById("recordTime").textContent = "00:00";
+  document.getElementById("recordButton").classList.remove("recording");
   recordingSeconds = 0;
 }
 
 function cancelAudioRecording() {
-  if (currentRecorder && currentRecorder.state === 'recording') {
+  if (currentRecorder && currentRecorder.state === "recording") {
     currentRecorder.stop();
     if (recordingStream) {
-      recordingStream.getTracks().forEach(t => t.stop());
+      recordingStream.getTracks().forEach((t) => t.stop());
     }
   }
   if (recordingTimer) {
     clearInterval(recordingTimer);
   }
-  document.getElementById('audioModal').classList.remove('active');
+  document.getElementById("audioModal").classList.remove("active");
   currentAudioContext = null;
   currentRecorder = null;
   recordingStream = null;
 }
 
-document.getElementById('recordButton').addEventListener('click', async function () {
-  if (!currentRecorder || currentRecorder.state === 'inactive') {
-    // Start recording
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      recordingStream = stream;
+document
+  .getElementById("recordButton")
+  .addEventListener("click", async function () {
+    if (!currentRecorder || currentRecorder.state === "inactive") {
+      // Start recording
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        recordingStream = stream;
 
-      const options = {
-        audioBitsPerSecond: 32000,
-        mimeType: 'audio/webm;codecs=opus'
-      };
+        const options = {
+          audioBitsPerSecond: 32000,
+          mimeType: "audio/webm;codecs=opus",
+        };
 
-      currentRecorder = new MediaRecorder(stream, options);
-      let chunks = [];
+        currentRecorder = new MediaRecorder(stream, options);
+        let chunks = [];
 
-      currentRecorder.ondataavailable = e => chunks.push(e.data);
+        currentRecorder.ondataavailable = (e) => chunks.push(e.data);
 
-      currentRecorder.onstop = async () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        const bytes = new Uint8Array(await blob.arrayBuffer());
+        currentRecorder.onstop = async () => {
+          const blob = new Blob(chunks, { type: "audio/webm" });
+          const bytes = new Uint8Array(await blob.arrayBuffer());
 
-        if (currentAudioContext) {
-          const { pageNum, x, y, wrap } = currentAudioContext;
-          addMarker(pageNum, x, y, "audio", bytes, wrap, true);
-          statusMsg.textContent = "✅ Compressed audio added!";
-          statusMsg.style.color = "#28a745";
-        }
+          if (currentAudioContext) {
+            const { pageNum, x, y, wrap } = currentAudioContext;
+            addMarker(pageNum, x, y, "audio", bytes, wrap, true);
+            statusMsg.textContent = "✅ Compressed audio added!";
+            statusMsg.style.color = "#28a745";
+          }
 
-        document.getElementById('audioModal').classList.remove('active');
-        stream.getTracks().forEach(t => t.stop());
-        clearInterval(recordingTimer);
-        currentRecorder = null;
-        recordingStream = null;
-        currentAudioContext = null;
-      };
+          document.getElementById("audioModal").classList.remove("active");
+          stream.getTracks().forEach((t) => t.stop());
+          clearInterval(recordingTimer);
+          currentRecorder = null;
+          recordingStream = null;
+          currentAudioContext = null;
+        };
 
-      currentRecorder.start();
-      this.classList.add('recording');
-      document.getElementById('recordStatus').textContent = 'Recording... Click to stop';
+        currentRecorder.start();
+        this.classList.add("recording");
+        document.getElementById("recordStatus").textContent =
+          "Recording... Click to stop";
 
-      recordingSeconds = 0;
-      recordingTimer = setInterval(() => {
-        recordingSeconds++;
-        const mins = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
-        const secs = (recordingSeconds % 60).toString().padStart(2, '0');
-        document.getElementById('recordTime').textContent = `${mins}:${secs}`;
-      }, 1000);
-
-    } catch (error) {
-      console.error("Audio recording failed:", error);
-      statusMsg.textContent = "❌ Microphone access denied";
-      statusMsg.style.color = "#dc3545";
-      document.getElementById('audioModal').classList.remove('active');
+        recordingSeconds = 0;
+        recordingTimer = setInterval(() => {
+          recordingSeconds++;
+          const mins = Math.floor(recordingSeconds / 60)
+            .toString()
+            .padStart(2, "0");
+          const secs = (recordingSeconds % 60).toString().padStart(2, "0");
+          document.getElementById("recordTime").textContent = `${mins}:${secs}`;
+        }, 1000);
+      } catch (error) {
+        console.error("Audio recording failed:", error);
+        statusMsg.textContent = "❌ Microphone access denied";
+        statusMsg.style.color = "#dc3545";
+        document.getElementById("audioModal").classList.remove("active");
+      }
+    } else {
+      // Stop recording
+      currentRecorder.stop();
+      this.classList.remove("recording");
+      document.getElementById("recordStatus").textContent = "Saving...";
     }
-  } else {
-    // Stop recording
-    currentRecorder.stop();
-    this.classList.remove('recording');
-    document.getElementById('recordStatus').textContent = 'Saving...';
-  }
-});
+  });
 
 /**************** POPUP MENU & RECORDING *********************/
 function openPopupMenu(e, wrap, pageNum) {
@@ -508,7 +538,7 @@ function openPopupMenu(e, wrap, pageNum) {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.onchange = async ev => {
+    input.onchange = async (ev) => {
       if (ev.target.files[0]) {
         const bytes = new Uint8Array(await ev.target.files[0].arrayBuffer());
         addMarker(pageNum, x, y, "image", bytes, wrap, true);
@@ -567,21 +597,24 @@ function addMarker(pageNum, x, y, type, content, wrap, isNew) {
       newX = Math.max(0, Math.min(newX, rect.width - 24));
       newY = Math.max(0, Math.min(newY, rect.height - 24));
 
-      m.style.left = newX + 'px';
-      m.style.top = newY + 'px';
+      m.style.left = newX + "px";
+      m.style.top = newY + "px";
     }
 
     function onMouseMove(event) {
-      if (Math.abs(event.clientX - startX) > 5 || Math.abs(event.clientY - startY) > 5) {
+      if (
+        Math.abs(event.clientX - startX) > 5 ||
+        Math.abs(event.clientY - startY) > 5
+      ) {
         isDragging = true;
         moveAt(event.clientX, event.clientY);
       }
     }
 
-    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener("mousemove", onMouseMove);
 
     document.onmouseup = function () {
-      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener("mousemove", onMouseMove);
       document.onmouseup = null;
 
       if (isDragging) {
@@ -597,7 +630,9 @@ function addMarker(pageNum, x, y, type, content, wrap, isNew) {
         statusMsg.style.color = "#28a745";
       }
 
-      setTimeout(() => { isDragging = false; }, 100);
+      setTimeout(() => {
+        isDragging = false;
+      }, 100);
     };
   };
 
@@ -617,16 +652,17 @@ function addMarker(pageNum, x, y, type, content, wrap, isNew) {
 function updateMarkerPosition(pageNum, oldX, oldY, newX, newY) {
   if (!pageMarkers[pageNum]) return;
 
-  const marker = pageMarkers[pageNum].find(m =>
-    Math.abs(m.x - oldX) < 5 && Math.abs(m.y - oldY) < 5
+  const marker = pageMarkers[pageNum].find(
+    (m) => Math.abs(m.x - oldX) < 5 && Math.abs(m.y - oldY) < 5
   );
 
   if (marker) {
     marker.x = Math.round(newX);
     marker.y = Math.round(newY);
   }
-} function revealMarker(m, wrap) {
-  const existing = wrap.querySelector('.note-popup');
+}
+function revealMarker(m, wrap) {
+  const existing = wrap.querySelector(".note-popup");
   if (existing) existing.remove();
 
   const type = m.dataset.type;
@@ -678,15 +714,17 @@ function updateMarkerPosition(pageNum, oldX, oldY, newX, newY) {
         }, 2000);
       });
     };
-
   } else if (type === "image") {
     const blob = new Blob([content], { type: "image/jpeg" });
     const url = URL.createObjectURL(blob);
-    const pageNum = parseInt(wrap.id.split('-')[1]);
+    const pageNum = parseInt(wrap.id.split("-")[1]);
     const markerX = parseInt(m.style.left) + 12;
     const markerY = parseInt(m.style.top) + 12;
-    const marker = pageMarkers[pageNum].find(mark => Math.abs(mark.x - markerX) < 5 && mark.type === 'image');
-    const savedSize = marker && marker.size ? marker.size : { width: 250, height: 250 };
+    const marker = pageMarkers[pageNum].find(
+      (mark) => Math.abs(mark.x - markerX) < 5 && mark.type === "image"
+    );
+    const savedSize =
+      marker && marker.size ? marker.size : { width: 250, height: 250 };
 
     display.innerHTML = `
       <div class="note-popup-header" style="display: flex; align-items: center; padding: 10px 15px; padding-right: 45px;">
@@ -703,7 +741,6 @@ function updateMarkerPosition(pageNum, oldX, oldY, newX, newY) {
         <img src="${url}" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
       </div>
     `;
-
   } else if (type === "audio") {
     const blob = new Blob([content], { type: "audio/webm" });
     const url = URL.createObjectURL(blob);
@@ -736,14 +773,16 @@ function updateMarkerPosition(pageNum, oldX, oldY, newX, newY) {
 
     // Shared Save logic for Resizing
     if (type === "image") {
-      const contentBox = display.querySelector('.note-popup-content');
+      const contentBox = display.querySelector(".note-popup-content");
       if (contentBox) {
         const newWidth = contentBox.clientWidth;
         const newHeight = contentBox.clientHeight;
-        const pageNum = parseInt(wrap.id.split('-')[1]);
+        const pageNum = parseInt(wrap.id.split("-")[1]);
         const markerX = parseInt(m.style.left) + 12;
         const markerY = parseInt(m.style.top) + 12;
-        const marker = pageMarkers[pageNum].find(mark => Math.abs(mark.x - markerX) < 5 && mark.type === 'image');
+        const marker = pageMarkers[pageNum].find(
+          (mark) => Math.abs(mark.x - markerX) < 5 && mark.type === "image"
+        );
         if (marker) {
           marker.size = { width: newWidth, height: newHeight };
         }
@@ -762,11 +801,12 @@ function closePopup() {
 
 function startSnippingMode(pageNum, wrap) {
   isSnippingMode = true;
-  statusMsg.textContent = "✂️ Snipping mode active. Click and drag to select text.";
+  statusMsg.textContent =
+    "✂️ Snipping mode active. Click and drag to select text.";
   statusMsg.style.color = "#17a2b8";
 
-  const canvas = wrap.querySelector('canvas');
-  canvas.style.cursor = 'crosshair';
+  const canvas = wrap.querySelector("canvas");
+  canvas.style.cursor = "crosshair";
 
   let isDrawing = false;
 
@@ -776,7 +816,7 @@ function startSnippingMode(pageNum, wrap) {
     const rect = canvas.getBoundingClientRect();
     snipStartX = e.clientX - rect.left;
     snipStartY = e.clientY - rect.top;
-    snipRect = document.createElement('div');
+    snipRect = document.createElement("div");
     snipRect.style = `position:absolute; border:2px dashed #17a2b8; background:rgba(23,162,184,0.1); pointer-events:none;`;
     wrap.appendChild(snipRect);
   };
@@ -792,17 +832,17 @@ function startSnippingMode(pageNum, wrap) {
     const left = Math.min(currentX, snipStartX);
     const top = Math.min(currentY, snipStartY);
 
-    snipRect.style.left = left + 'px';
-    snipRect.style.top = top + 'px';
-    snipRect.style.width = width + 'px';
-    snipRect.style.height = height + 'px';
+    snipRect.style.left = left + "px";
+    snipRect.style.top = top + "px";
+    snipRect.style.width = width + "px";
+    snipRect.style.height = height + "px";
   };
 
   const handleMouseUp = async (e) => {
     if (!isDrawing || !isSnippingMode) return;
     isDrawing = false;
     isSnippingMode = false;
-    canvas.style.cursor = 'crosshair';
+    canvas.style.cursor = "crosshair";
 
     const rect = canvas.getBoundingClientRect();
     const endX = e.clientX - rect.left;
@@ -814,7 +854,13 @@ function startSnippingMode(pageNum, wrap) {
     const maxY = Math.max(snipStartY, endY);
 
     // Extract text from the selected area
-    const selectedText = await extractTextFromArea(pageNum, minX, minY, maxX, maxY);
+    const selectedText = await extractTextFromArea(
+      pageNum,
+      minX,
+      minY,
+      maxX,
+      maxY
+    );
 
     if (selectedText.trim()) {
       // Add snipped text to chatbot context and show tagged message
@@ -824,14 +870,17 @@ function startSnippingMode(pageNum, wrap) {
         statusMsg.style.color = "#28a745";
 
         // Show chatbot if hidden
-        const chatbotContainer = document.getElementById('chatbot-container');
-        const mainContent = document.querySelector('.main-content');
-        if (chatbotContainer && chatbotContainer.classList.contains('hidden')) {
-          chatbotContainer.classList.remove('hidden');
-          mainContent.classList.add('chatbot-visible');
+        const chatbotContainer = document.getElementById("chatbot-container");
+        const mainContent = document.querySelector(".main-content");
+        if (chatbotContainer && chatbotContainer.classList.contains("hidden")) {
+          chatbotContainer.classList.remove("hidden");
+          mainContent.classList.add("chatbot-visible");
         }
       } else {
-        statusMsg.textContent = "⚠️ Chatbot not available. Snipped text: " + selectedText.substring(0, 50) + "...";
+        statusMsg.textContent =
+          "⚠️ Chatbot not available. Snipped text: " +
+          selectedText.substring(0, 50) +
+          "...";
         statusMsg.style.color = "#ffc107";
       }
     } else {
@@ -846,14 +895,14 @@ function startSnippingMode(pageNum, wrap) {
     }
 
     // Remove event listeners
-    canvas.removeEventListener('mousedown', handleMouseDown);
-    canvas.removeEventListener('mousemove', handleMouseMove);
-    canvas.removeEventListener('mouseup', handleMouseUp);
+    canvas.removeEventListener("mousedown", handleMouseDown);
+    canvas.removeEventListener("mousemove", handleMouseMove);
+    canvas.removeEventListener("mouseup", handleMouseUp);
   };
 
-  canvas.addEventListener('mousedown', handleMouseDown);
-  canvas.addEventListener('mousemove', handleMouseMove);
-  canvas.addEventListener('mouseup', handleMouseUp);
+  canvas.addEventListener("mousedown", handleMouseDown);
+  canvas.addEventListener("mousemove", handleMouseMove);
+  canvas.addEventListener("mouseup", handleMouseUp);
 }
 
 async function extractTextFromArea(pageNum, minX, minY, maxX, maxY) {
@@ -862,24 +911,24 @@ async function extractTextFromArea(pageNum, minX, minY, maxX, maxY) {
     const textContent = await page.getTextContent();
     const viewport = page.getViewport({ scale: currentZoom });
 
-    let selectedText = '';
+    let selectedText = "";
 
     for (const item of textContent.items) {
       const tx = item.transform[4] * currentZoom;
-      const ty = viewport.height - (item.transform[5] * currentZoom);
+      const ty = viewport.height - item.transform[5] * currentZoom;
       const tw = item.width * currentZoom;
       const th = item.height * currentZoom;
 
       // Check if text item overlaps with selection rectangle
       if (tx < maxX && tx + tw > minX && ty < maxY && ty + th > minY) {
-        selectedText += item.str + ' ';
+        selectedText += item.str + " ";
       }
     }
 
     return selectedText.trim();
   } catch (error) {
-    console.error('Error extracting text:', error);
-    return '';
+    console.error("Error extracting text:", error);
+    return "";
   }
 }
 
@@ -896,7 +945,9 @@ saveBtn.onclick = async () => {
 
   try {
     const { PDFDocument } = PDFLib;
-    const pdfLibDoc = await PDFDocument.load(Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0)));
+    const pdfLibDoc = await PDFDocument.load(
+      Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))
+    );
 
     let metadataEntries = [];
 
@@ -908,7 +959,7 @@ saveBtn.onclick = async () => {
           const compressed = await compressText(m.content);
           metadataEntries.push(`${pageNum}|${m.x}|${m.y}|ztext|${compressed}`);
         } else {
-          let binary = '';
+          let binary = "";
           const bytes = new Uint8Array(m.content);
           const len = bytes.byteLength;
           for (let i = 0; i < len; i++) {
@@ -918,9 +969,13 @@ saveBtn.onclick = async () => {
 
           if (m.type === "image") {
             const size = m.size || { width: 250, height: 250 };
-            metadataEntries.push(`${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}|${size.width}|${size.height}`);
+            metadataEntries.push(
+              `${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}|${size.width}|${size.height}`
+            );
           } else {
-            metadataEntries.push(`${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}`);
+            metadataEntries.push(
+              `${pageNum}|${m.x}|${m.y}|${m.type}|${base64Data}`
+            );
           }
         }
       }
@@ -935,7 +990,7 @@ saveBtn.onclick = async () => {
     const metadataString = JSON.stringify({
       version: "2.0",
       timestamp: new Date().toISOString(),
-      markers: metadataEntries
+      markers: metadataEntries,
     });
 
     pdfLibDoc.setKeywords([metadataString]);
@@ -954,7 +1009,6 @@ saveBtn.onclick = async () => {
 
     statusMsg.textContent = `✅ PDF saved successfully!`;
     statusMsg.style.color = "#28a745";
-
   } catch (err) {
     console.error("Save failed:", err);
     statusMsg.textContent = "❌ Save failed. Image might be too large.";
@@ -966,7 +1020,9 @@ saveBtn.onclick = async () => {
 async function restoreMarkers() {
   try {
     const { PDFDocument } = PDFLib;
-    const pdfLibDoc = await PDFDocument.load(Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0)));
+    const pdfLibDoc = await PDFDocument.load(
+      Uint8Array.from(atob(pdfBase64), (c) => c.charCodeAt(0))
+    );
 
     const keywords = pdfLibDoc.getKeywords();
     console.log("Keywords found:", keywords);
@@ -978,8 +1034,8 @@ async function restoreMarkers() {
 
     let metadataString = null;
 
-    const jsonStart = keywords.indexOf('{');
-    const jsonEnd = keywords.lastIndexOf('}');
+    const jsonStart = keywords.indexOf("{");
+    const jsonEnd = keywords.lastIndexOf("}");
 
     if (jsonStart !== -1 && jsonEnd !== -1) {
       metadataString = keywords.substring(jsonStart, jsonEnd + 1);
@@ -1022,7 +1078,7 @@ async function restoreMarkers() {
     for (let i = 0; i < markersArray.length; i++) {
       const entry = markersArray[i];
 
-      if (typeof entry !== 'string') {
+      if (typeof entry !== "string") {
         console.warn(`Marker ${i} is not a string:`, entry);
         continue;
       }
@@ -1042,7 +1098,7 @@ async function restoreMarkers() {
         continue;
       }
 
-      const wraps = document.querySelectorAll('.pageWrapper');
+      const wraps = document.querySelectorAll(".pageWrapper");
       if (pageIndex > wraps.length) {
         console.warn(`Page ${pageIndex} not found`);
         continue;
@@ -1065,9 +1121,8 @@ async function restoreMarkers() {
             x: absX,
             y: absY,
             type: "text",
-            content: originalText
+            content: originalText,
           });
-
         } catch (error) {
           console.error("Failed to decompress text:", error);
         }
@@ -1078,7 +1133,9 @@ async function restoreMarkers() {
             continue;
           }
 
-          const binaryData = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+          const binaryData = Uint8Array.from(atob(data), (c) =>
+            c.charCodeAt(0)
+          );
 
           if (binaryData.length === 0) {
             console.warn(`Empty binary data for ${type}`);
@@ -1098,7 +1155,7 @@ async function restoreMarkers() {
             x: absX,
             y: absY,
             type: type,
-            content: binaryData
+            content: binaryData,
           };
           if (type === "image") {
             markerData.size = size || { width: 250, height: 250 };
@@ -1118,9 +1175,9 @@ async function restoreMarkers() {
       statusMsg.textContent = `✅ Found ${restoredCount} hidden items! Click red dots to view.`;
       statusMsg.style.color = "#28a745";
 
-      if (!document.querySelector('#pulse-animation')) {
-        const style = document.createElement('style');
-        style.id = 'pulse-animation';
+      if (!document.querySelector("#pulse-animation")) {
+        const style = document.createElement("style");
+        style.id = "pulse-animation";
         style.textContent = `
               @keyframes pulse {
                 0% { transform: scale(1); }
@@ -1132,9 +1189,9 @@ async function restoreMarkers() {
       }
 
       setTimeout(() => {
-        const markers = document.querySelectorAll('.note-marker');
-        markers.forEach(marker => {
-          marker.style.animation = 'pulse 1s ease-in-out 2';
+        const markers = document.querySelectorAll(".note-marker");
+        markers.forEach((marker) => {
+          marker.style.animation = "pulse 1s ease-in-out 2";
         });
       }, 100);
 
@@ -1144,7 +1201,6 @@ async function restoreMarkers() {
       statusMsg.style.color = "#dc3545";
       return false;
     }
-
   } catch (e) {
     console.error("Restore failed:", e);
     statusMsg.textContent = "❌ Error restoring data";
@@ -1154,59 +1210,59 @@ async function restoreMarkers() {
 }
 
 // Keyboard shortcuts
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && e.key === 's') {
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.key === "s") {
     e.preventDefault();
     saveBtn.click();
   }
-  if (e.key === 'Escape') {
+  if (e.key === "Escape") {
     closeTextModal();
     cancelAudioRecording();
     if (isSnippingMode) {
       isSnippingMode = false;
       statusMsg.textContent = "Snipping mode cancelled.";
       statusMsg.style.color = "#dc3545";
-      const canvases = document.querySelectorAll('canvas');
-      canvases.forEach(canvas => canvas.style.cursor = 'crosshair');
+      const canvases = document.querySelectorAll("canvas");
+      canvases.forEach((canvas) => (canvas.style.cursor = "crosshair"));
     }
   }
 });
 
 // Close modals on overlay click
-document.getElementById('textModal').addEventListener('click', (e) => {
-  if (e.target.id === 'textModal') {
+document.getElementById("textModal").addEventListener("click", (e) => {
+  if (e.target.id === "textModal") {
     closeTextModal();
   }
 });
 
-document.getElementById('audioModal').addEventListener('click', (e) => {
-  if (e.target.id === 'audioModal') {
+document.getElementById("audioModal").addEventListener("click", (e) => {
+  if (e.target.id === "audioModal") {
     cancelAudioRecording();
   }
 });
-window.addEventListener('DOMContentLoaded', () => {
-  const shutter = document.getElementById('entranceShutter');
-  const content = document.querySelector('.content-wrapper');
+window.addEventListener("DOMContentLoaded", () => {
+  const shutter = document.getElementById("entranceShutter");
+  const content = document.querySelector(".content-wrapper");
 
   // Smooth delay before starting the reveal
   setTimeout(() => {
     // 1. Open the Shutters
-    document.body.classList.add('shutter-open');
+    document.body.classList.add("shutter-open");
 
     // 2. Reveal the main content with a staggered scale
-    content.classList.add('reveal');
+    content.classList.add("reveal");
 
     // 3. Cleanup the shutter to free up memory/events
     setTimeout(() => {
-      shutter.style.display = 'none';
+      shutter.style.display = "none";
     }, 1200);
   }, 300);
 });
 
 // Optional: Add a "Scanning" effect when a PDF is first rendered
 function triggerScanEffect() {
-  const viewer = document.getElementById('viewer');
-  const scanLine = document.createElement('div');
+  const viewer = document.getElementById("viewer");
+  const scanLine = document.createElement("div");
   scanLine.style = `
         position: absolute;
         top: 0; left: 0; width: 100%; height: 2px;
@@ -1219,10 +1275,10 @@ function triggerScanEffect() {
 
   anime({
     targets: scanLine,
-    top: ['0%', '100%'],
+    top: ["0%", "100%"],
     opacity: [1, 0],
-    easing: 'easeInOutQuad',
+    easing: "easeInOutQuad",
     duration: 2000,
-    complete: () => scanLine.remove()
+    complete: () => scanLine.remove(),
   });
 }

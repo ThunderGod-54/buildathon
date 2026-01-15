@@ -551,6 +551,16 @@
       <div id="loader-percentage"
         style="margin-top: 15px; font-family: monospace; color: var(--text-gray); font-size: 0.8rem;">0%</div>
     </div>
+    <div id="skip-chip"
+      style="display: none; position: absolute; top: 40px; left: 50%; transform: translateX(-50%); background: rgba(0, 153, 255, 0.2); border: 2px solid var(--accent-blue); border-radius: 25px; padding: 12px 25px; backdrop-filter: blur(10px); z-index: 10001; cursor: pointer;">
+      <div
+        style="color: var(--accent-blue); font-family: monospace; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <svg style="width: 16px; height: 16px; fill: var(--accent-blue);" viewBox="0 0 24 24">
+          <path d="M18 12L10 6V18L18 12Z" />
+        </svg>
+        TAP ANYWHERE TO SKIP
+      </div>
+    </div>
   
     <video id="protocol-video" style="display: none; width: 100%; height: 100%; object-fit: cover;">
       <source src="assets/loader.mp4" type="video/mp4">
@@ -862,64 +872,124 @@
       const loaderPct = document.getElementById('loader-percentage');
       const video = document.getElementById('protocol-video');
       const loaderVisual = document.getElementById('loader-visual');
+      let chipShown = false;
+  launchBtn.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent immediate navigation
 
-      launchBtn.addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent immediate navigation
+      // 1. Reveal Overlay
+      initOverlay.style.display = 'flex';
 
-        // 1. Reveal Overlay
-        initOverlay.style.display = 'flex';
+      // 2. Animate the Loader Bar
+      let progress = { val: 0 };
+      const statusMessages = ["BYPASSING FIREWALLS...", "DECRYPTING LAYERS...", "PROTOCOL READY"];
+      let chipShown = false;
 
-        // 2. Animate the Loader Bar
-        let progress = { val: 0 };
-        const statusMessages = ["BYPASSING FIREWALLS...", "DECRYPTING LAYERS...", "PROTOCOL READY"];
+      anime({
+        targets: progress,
+        val: 100,
+        duration: 3000,
+        easing: 'easeInOutQuad',
+        update: function () {
+          loaderBar.style.width = progress.val + '%';
+          loaderPct.innerHTML = Math.round(progress.val) + '%';
 
-        anime({
-          targets: progress,
-          val: 100,
-          duration: 3000,
-          easing: 'easeInOutQuad',
-          update: function () {
-            loaderBar.style.width = progress.val + '%';
-            loaderPct.innerHTML = Math.round(progress.val) + '%';
+          // Change text based on progress
+          if (progress.val > 30 && progress.val < 70) loaderText.innerHTML = statusMessages[0];
+          if (progress.val > 70) loaderText.innerHTML = statusMessages[1];
 
-            // Change text based on progress
-            if (progress.val > 30 && progress.val < 70) loaderText.innerHTML = statusMessages[0];
-            if (progress.val > 70) loaderText.innerHTML = statusMessages[1];
-          },
-          complete: () => {
-            loaderText.innerHTML = statusMessages[2];
-
-            // 3. Transition from Loader to Video
+          // Show blue chip after "BYPASSING FIREWALLS" phase (only fade in)
+          if (progress.val > 50 && !chipShown) {
+            chipShown = true;
             anime({
-              targets: loaderVisual,
-              opacity: 0,
-              scale: 0.9,
-              duration: 500,
-              easing: 'easeInQuad',
-              complete: () => {
-                loaderVisual.style.display = 'none';
-                video.style.display = 'block';
-
-                // 4. Play Video with Audio
-                video.play();
-
-                // 5. Navigate to editpdf.html when video ends
-                video.onended = () => {
-                  anime({
-                    targets: initOverlay,
-                    opacity: 0,
-                    duration: 1000,
-                    easing: 'linear',
-                    complete: () => {
-                      window.location.href = 'editpdf.html';
-                    }
-                  });
-                };
+              targets: '#skip-chip',
+              opacity: [0, 1],
+              duration: 600,
+              easing: 'easeOutQuad',
+              begin: () => {
+                document.getElementById('skip-chip').style.display = 'block';
               }
             });
           }
-        });
+        },
+        complete: () => {
+          loaderText.innerHTML = statusMessages[2];
+
+          // 3. Transition from Loader to Video - ONLY FADE OUT LOADER, NOT CHIP
+          anime({
+            targets: loaderVisual,
+            opacity: 0,
+            scale: 0.9,
+            duration: 500,
+            easing: 'easeInQuad',
+            complete: () => {
+              loaderVisual.style.display = 'none';
+              video.style.display = 'block';
+
+              // 4. Play Video with Audio
+              video.play();
+
+              // Show skip chip if not already shown
+              if (!chipShown) {
+                anime({
+                  targets: '#skip-chip',
+                  opacity: [0, 1],
+                  duration: 600,
+                  easing: 'easeOutQuad',
+                  begin: () => {
+                    document.getElementById('skip-chip').style.display = 'block';
+                  }
+                });
+              }
+
+              // 5. Skip functionality - tap anywhere to skip
+              const skipVideo = () => {
+                video.pause();
+                // Fade out chip with overlay
+                anime({
+                  targets: '#skip-chip',
+                  opacity: 0,
+                  duration: 300,
+                  easing: 'easeInQuad'
+                });
+                anime({
+                  targets: initOverlay,
+                  opacity: 0,
+                  duration: 800,
+                  easing: 'easeInOutQuad',
+                  complete: () => {
+                    window.location.href = 'editpdf.html';
+                  }
+                });
+              };
+
+              // Add click event to entire overlay for skipping
+              initOverlay.addEventListener('click', skipVideo);
+
+              // 6. Navigate to editpdf.html when video ends normally
+              video.onended = () => {
+                initOverlay.removeEventListener('click', skipVideo);
+                // Fade out chip
+                anime({
+                  targets: '#skip-chip',
+                  opacity: 0,
+                  duration: 300,
+                  easing: 'easeInQuad'
+                });
+                anime({
+                  targets: initOverlay,
+                  opacity: 0,
+                  duration: 1000,
+                  easing: 'linear',
+                  complete: () => {
+                    window.location.href = 'editpdf.html';
+                  }
+                });
+              };
+            }
+          });
+        }
       });
+    });
   </script>
 </body>
 

@@ -20,6 +20,29 @@ class Chatbot {
             if (e.key === 'Enter') this.sendMessage();
         });
 
+        // Add clear chat button
+        this.clearChatButton = document.createElement('button');
+        this.clearChatButton.textContent = 'Clear Chat';
+        this.clearChatButton.style.background = 'none';
+        this.clearChatButton.style.border = '1px solid black';
+        this.clearChatButton.style.color = 'inherit';
+        this.clearChatButton.style.cursor = 'pointer';
+        this.clearChatButton.style.fontSize = '0.8em';
+        this.clearChatButton.style.padding = '4px 8px';
+        this.clearChatButton.style.borderRadius = '4px';
+        this.clearChatButton.style.marginLeft = 'auto';
+        this.clearChatButton.style.marginRight = '10px';
+        this.clearChatButton.addEventListener('click', () => this.clearChat());
+        // Position at the top of the chatbot, in the header
+        const headerDiv = document.querySelector('#chatbot-container > div:first-child');
+        if (headerDiv) {
+            headerDiv.insertBefore(this.clearChatButton, headerDiv.lastElementChild);
+        }
+
+        // Update button color based on theme
+        this.updateClearChatButtonColor();
+        document.addEventListener('themeChanged', () => this.updateClearChatButtonColor());
+
         // Voice recording functionality
         if (this.voiceButton) {
             this.voiceButton.addEventListener('click', () => this.toggleVoiceRecording());
@@ -244,13 +267,18 @@ class Chatbot {
                 <img id="image-${messageId}" src="${imageUrl}" style="width: 100%; max-width: 250px; margin: 8px 0; border-radius: 8px; object-fit: contain;">
                 <div class="image-prompt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1em; height: 1em; vertical-align: middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg> Ask me anything about this image!</div><div class="message-timestamp">${new Date().toLocaleTimeString()}</div>
             </div>
-            
+
         `;
         this.messagesContainer.appendChild(msg);
         this.messagesContainer.scrollTop = this.messagesContainer.scrollHeight;
 
-        // Add to context for chatbot
-        this.context.push(`Image Message: [Image file uploaded at ${new Date().toLocaleString()}]`);
+        // Convert blob to base64 and add to context
+        this.fileToBase64(imageBlob).then(base64 => {
+            this.context.push(`Image File: Marker Image\n\nBase64 Data: ${base64}`);
+        }).catch(err => {
+            console.error('Error converting image to base64:', err);
+            this.context.push(`Image Message: [Image file uploaded at ${new Date().toLocaleString()}]`);
+        });
 
         // Auto-focus input for questions about the image
         setTimeout(() => {
@@ -287,12 +315,37 @@ class Chatbot {
         }
     }
 
+    structureBotMessage(text) {
+        const lines = text.split('\n');
+        let formatted = '';
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (line && line.length < 50 && !line.includes('.') && !line.includes('?') && !line.includes('!')) {
+                // Assume it's a title
+                formatted += `**${line}**\n\n`;
+            } else if (line) {
+                formatted += `${line}\n\n`;
+            }
+        }
+        return formatted;
+    }
+
     addMessage(text, type) {
         const msg = document.createElement('div');
         msg.className = `chat-message ${type}`;
+        let bubbleContent = text;
+        if (type === 'bot') {
+            text = this.structureBotMessage(text);
+            if (typeof marked !== 'undefined') {
+                bubbleContent = marked.parse(text);
+            } else {
+                // Fallback: replace **bold** with <strong>bold</strong> and \n\n with <br><br>
+                bubbleContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n\n/g, '<br><br>');
+            }
+        }
         msg.innerHTML = `
             <div class="message-avatar">${type === 'user' ? 'U' : 'AI'}</div>
-            <div class="message-bubble">${text}</div>
+            <div class="message-bubble">${bubbleContent}</div>
             <div class="message-timestamp">${new Date().toLocaleTimeString()}</div>
         `;
         this.messagesContainer.appendChild(msg);
@@ -332,6 +385,11 @@ class Chatbot {
 
     addContext(content) {
         this.context.push(content);
+    }
+
+    clearChat() {
+        this.messagesContainer.innerHTML = '';
+        this.context = [];
     }
 
     addSnippedText(text) {
@@ -422,6 +480,30 @@ class Chatbot {
             reader.onload = () => resolve(reader.result);
             reader.onerror = error => reject(error);
         });
+    }
+
+    updateClearChatButtonColor() {
+        if (this.clearChatButton) {
+            const body = document.body;
+            if (body.classList.contains('dark-theme')) {
+                this.clearChatButton.style.border = '1px solid white';
+                this.clearChatButton.style.color = 'white';
+            } else {
+                this.clearChatButton.style.border = '1px solid black';
+                this.clearChatButton.style.color = 'black';
+            }
+        }
+    }
+
+    updateClearChatButtonVisibility() {
+        if (this.clearChatButton) {
+            // Always visible in both themes
+            this.clearChatButton.style.display = 'inline-block';
+        }
+    }
+
+    sendDefaultMessage(message) {
+        this.sendMessage(message);
     }
 }
 

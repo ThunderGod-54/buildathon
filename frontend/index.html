@@ -532,6 +532,25 @@
         width: 20px;
       }
     }
+
+    /* YouTube Section */
+    .youtube-section {
+      padding: 50px 20px 100px 20px;
+      text-align: center;
+    }
+
+    .youtube-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .youtube-container iframe {
+      width: 100%;
+      height: 450px;
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
+      box-shadow: 0 10px 25px var(--shadow);
+    }
   </style>
 </head>
 
@@ -591,9 +610,8 @@
   <section class="hero is-visible">
     <div class="hero-content">
       <h1 id="title">Stego<span>PDF</span></h1>
-      <p class="hero-subtitle">Military-grade steganography. Hide data within PDF binary structures invisible to
-        forensic scanners.</p>
-      <a href="editpdf.html" class="btn-launch">INITIALIZE PROTOCOL</a>
+      <p class="hero-subtitle">Beyond editing; Total Information Camouflage.</p>
+      <a href="editpdf.html" class="btn-launch">LAUNCH APP</a>
     </div>
   </section>
 
@@ -613,29 +631,29 @@
 
   <section id="core-features">
     <div class="section-header">
-      <div class="section-label">Stealth Technology</div>
+      <div class="section-label">Shadow Encoding</div>
       <h2>Invisible Data Concealment</h2>
       <p class="hero-subtitle" style="max-width: 800px; margin: 20px auto 0;">Advanced steganography techniques that
         embed data within PDF metadata layers, completely undetectable to standard viewers.</p>
     </div>
     <div class="features-grid">
       <div class="card-3d">
-        <h3>Invisible Metadata Storage</h3>
-        <p>Embed data into internal Keywords streams. Standard PDF viewers detect zero changes to the document while
-          your data remains securely hidden in the binary layer.</p>
-        <div class="tech-tag">Binary Layer Injection</div>
+        <h3>Zero-Intrusion Metadata Layer</h3>
+        <p>We solve "information clutter" by utilizing the PDF's internal keyword streams. This keeps the document 100% readable
+        and downloadable while preserving the student’s personal research layer.</p>
+        <div class="tech-tag">Steganography</div>
       </div>
       <div class="card-3d">
-        <h3>Deep Stealth Compression</h3>
-        <p>Integrated GZIP shrinkage ensures hidden artifacts look like natural digital entropy to forensic scanners.
-          Compresses data by up to 90% before embedding.</p>
+        <h3>Compressed Study Bundles</h3>
+        <p>Save space without losing quality. Our integrated GZIP tool shrinks heavy text notes so your study guides remain
+        lightweight and easy to share with classmates.</p>
         <div class="tech-tag">GZIP Compression v2.0</div>
       </div>
       <div class="card-3d">
         <h3>Multimedia Embedding</h3>
-        <p>Support for live audio recordings and high-res imagery attached to specific document coordinates with
-          lossless recovery protocols.</p>
-        <div class="tech-tag">Multi-Format Support</div>
+        <p>Link Everything! Don't just take notes; pin them. Use precise coordinate-based mapping to attach voice memos or diagrams exactly next to
+        the relevant chart or equation on the page.</p>
+        <div class="tech-tag">Supports Audio/Text/Images</div>
       </div>
     </div>
   </section>
@@ -705,13 +723,17 @@
     </div>
   </section>
 
-  <section id="youtube-video" class="is-visible" style="padding: 100px 20px; text-align: center;">
+  <section class="youtube-section">
     <div class="section-header">
       <div class="section-label">Demo Video</div>
-      <h2>Watch StegoPDF in Action</h2>
+      <h2>How to Use StegoPDF</h2>
+      <p class="hero-subtitle" style="max-width: 800px; margin: 20px auto 0;">Watch this quick demonstration to see
+        StegoPDF in action, hiding data invisibly within PDF structures.</p>
     </div>
-    <div style="max-width: 800px; margin: 0 auto; background: var(--glass); border: 1px solid var(--border-light); border-radius: 30px; padding: 20px; backdrop-filter: blur(20px); box-shadow: 0 15px 35px var(--shadow);">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 20px;"></iframe>
+    <div class="youtube-container">
+      <iframe src="https://www.youtube.com/embed/xJ2HXsJreVo" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
     </div>
   </section>
 
@@ -882,196 +904,196 @@
     const video = document.getElementById('protocol-video');
     const loaderVisual = document.getElementById('loader-visual');
     let chipShown = false;
-  launchBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+    launchBtn.addEventListener('click', (e) => {
+      e.preventDefault();
 
-    // 1. Reveal Overlay
-    initOverlay.style.display = 'flex';
-    console.log('Overlay displayed');
+      // 1. Reveal Overlay
+      initOverlay.style.display = 'flex';
+      console.log('Overlay displayed');
 
-    // 2. Animate the Loader Bar
-    let progress = { val: 0 };
-    const statusMessages = ["BYPASSING FIREWALLS...", "DECRYPTING LAYERS...", "PROTOCOL READY"];
-    let chipShown = false;
+      // 2. Animate the Loader Bar
+      let progress = { val: 0 };
+      const statusMessages = ["BYPASSING FIREWALLS...", "DECRYPTING LAYERS...", "PROTOCOL READY"];
+      let chipShown = false;
 
-    anime({
-      targets: progress,
-      val: 100,
-      duration: 3000,
-      easing: 'easeInOutQuad',
-      update: function () {
-        loaderBar.style.width = progress.val + '%';
-        loaderPct.innerHTML = Math.round(progress.val) + '%';
+      anime({
+        targets: progress,
+        val: 100,
+        duration: 3000,
+        easing: 'easeInOutQuad',
+        update: function () {
+          loaderBar.style.width = progress.val + '%';
+          loaderPct.innerHTML = Math.round(progress.val) + '%';
 
-        if (progress.val > 30 && progress.val < 70) loaderText.innerHTML = statusMessages[0];
-        if (progress.val > 70) loaderText.innerHTML = statusMessages[1];
+          if (progress.val > 30 && progress.val < 70) loaderText.innerHTML = statusMessages[0];
+          if (progress.val > 70) loaderText.innerHTML = statusMessages[1];
 
-        if (progress.val > 50 && !chipShown) {
-          chipShown = true;
-          console.log('Showing chip at 50% loading');
-          anime({
-            targets: '#skip-chip',
-            opacity: [0, 1],
-            duration: 400,
-            easing: 'easeOutQuad',
-            begin: () => {
-              document.getElementById('skip-chip').style.display = 'block';
-              console.log('Chip is now visible');
-            }
-          });
-        }
-      },
-      complete: () => {
-        loaderText.innerHTML = statusMessages[2];
-        console.log('Loader complete, transitioning to video');
-
-        // 3. Transition from Loader to Video
-        anime({
-          targets: loaderVisual,
-          opacity: 0,
-          scale: 0.9,
-          duration: 400,
-          easing: 'easeInQuad',
-          complete: () => {
-            loaderVisual.style.display = 'none';
-            video.style.display = 'block';
-            console.log('Video element displayed');
-
-            // Show chip if not already shown
-            if (!chipShown) {
-              console.log('Showing chip before video');
-              anime({
-                targets: '#skip-chip',
-                opacity: [0, 1],
-                duration: 300,
-                easing: 'easeOutQuad',
-                begin: () => {
-                  document.getElementById('skip-chip').style.display = 'block';
-                  console.log('Chip made visible');
-                }
-              });
-              chipShown = true;
-            }
-
-            // TRIPLE LAYER APPROACH to hide chip at 1.9 seconds
-            let chipHideAttempted = false;
-
-            // METHOD 1: ontimeupdate (most accurate) - CHANGED TO 1.9
-            video.ontimeupdate = function () {
-              console.log('Video time update:', video.currentTime.toFixed(2), 'seconds');
-
-              if (!chipHideAttempted && video.currentTime >= 1.9) { // CHANGED: 2.5 → 1.9
-                chipHideAttempted = true;
-                console.log('METHOD 1: Hiding chip at video time 1.9s');
-                hideChip();
-                video.ontimeupdate = null;
+          if (progress.val > 50 && !chipShown) {
+            chipShown = true;
+            console.log('Showing chip at 50% loading');
+            anime({
+              targets: '#skip-chip',
+              opacity: [0, 1],
+              duration: 400,
+              easing: 'easeOutQuad',
+              begin: () => {
+                document.getElementById('skip-chip').style.display = 'block';
+                console.log('Chip is now visible');
               }
-            };
+            });
+          }
+        },
+        complete: () => {
+          loaderText.innerHTML = statusMessages[2];
+          console.log('Loader complete, transitioning to video');
 
-            // METHOD 2: Fallback setTimeout based on video duration - CHANGED TO 1.9
-            video.onloadedmetadata = function () {
-              console.log('Video metadata loaded, duration:', video.duration, 'seconds');
+          // 3. Transition from Loader to Video
+          anime({
+            targets: loaderVisual,
+            opacity: 0,
+            scale: 0.9,
+            duration: 400,
+            easing: 'easeInQuad',
+            complete: () => {
+              loaderVisual.style.display = 'none';
+              video.style.display = 'block';
+              console.log('Video element displayed');
 
-              // Set fallback timeout for 1.9 seconds (1900ms)
-              const fallbackTime = 1900; // CHANGED: 1.9 seconds
+              // Show chip if not already shown
+              if (!chipShown) {
+                console.log('Showing chip before video');
+                anime({
+                  targets: '#skip-chip',
+                  opacity: [0, 1],
+                  duration: 300,
+                  easing: 'easeOutQuad',
+                  begin: () => {
+                    document.getElementById('skip-chip').style.display = 'block';
+                    console.log('Chip made visible');
+                  }
+                });
+                chipShown = true;
+              }
+
+              // TRIPLE LAYER APPROACH to hide chip at 1.9 seconds
+              let chipHideAttempted = false;
+
+              // METHOD 1: ontimeupdate (most accurate) - CHANGED TO 1.9
+              video.ontimeupdate = function () {
+                console.log('Video time update:', video.currentTime.toFixed(2), 'seconds');
+
+                if (!chipHideAttempted && video.currentTime >= 1.9) { // CHANGED: 2.5 → 1.9
+                  chipHideAttempted = true;
+                  console.log('METHOD 1: Hiding chip at video time 1.9s');
+                  hideChip();
+                  video.ontimeupdate = null;
+                }
+              };
+
+              // METHOD 2: Fallback setTimeout based on video duration - CHANGED TO 1.9
+              video.onloadedmetadata = function () {
+                console.log('Video metadata loaded, duration:', video.duration, 'seconds');
+
+                // Set fallback timeout for 1.9 seconds (1900ms)
+                const fallbackTime = 1900; // CHANGED: 1.9 seconds
+                setTimeout(() => {
+                  if (!chipHideAttempted) {
+                    chipHideAttempted = true;
+                    console.log('METHOD 2: Fallback timeout hiding chip at 1.9s');
+                    hideChip();
+                  }
+                }, fallbackTime);
+              };
+
+              // METHOD 3: Absolute timeout as last resort - CHANGED TO 2500 (2.5s)
               setTimeout(() => {
                 if (!chipHideAttempted) {
                   chipHideAttempted = true;
-                  console.log('METHOD 2: Fallback timeout hiding chip at 1.9s');
+                  console.log('METHOD 3: Absolute timeout hiding chip');
                   hideChip();
                 }
-              }, fallbackTime);
-            };
+              }, 2500); // CHANGED: 5000 → 2500 (2.5 seconds absolute maximum)
 
-            // METHOD 3: Absolute timeout as last resort - CHANGED TO 2500 (2.5s)
-            setTimeout(() => {
-              if (!chipHideAttempted) {
-                chipHideAttempted = true;
-                console.log('METHOD 3: Absolute timeout hiding chip');
-                hideChip();
+              // Chip hide function
+              function hideChip() {
+                const chip = document.getElementById('skip-chip');
+                if (chip && chip.style.display !== 'none') {
+                  console.log('Executing chip hide animation at 1.9s');
+                  anime({
+                    targets: chip,
+                    opacity: 0,
+                    duration: 600,
+                    easing: 'easeInOutQuad',
+                    begin: () => {
+                      console.log('Chip fade started');
+                    },
+                    complete: () => {
+                      chip.style.display = 'none';
+                      console.log('Chip completely hidden');
+                    }
+                  });
+                } else {
+                  console.log('Chip already hidden or not found');
+                }
               }
-            }, 2500); // CHANGED: 5000 → 2500 (2.5 seconds absolute maximum)
 
-            // Chip hide function
-            function hideChip() {
-              const chip = document.getElementById('skip-chip');
-              if (chip && chip.style.display !== 'none') {
-                console.log('Executing chip hide animation at 1.9s');
+              // 4. Play Video
+              video.play().then(() => {
+                console.log('Video play successful, currentTime:', video.currentTime);
+              }).catch(err => {
+                console.error('Video play failed:', err);
+              });
+
+              // 5. Skip functionality
+              const skipVideo = () => {
+                console.log('Skip triggered');
+                video.pause();
+                video.ontimeupdate = null;
+
+                const chip = document.getElementById('skip-chip');
+                if (chip && chip.style.display !== 'none') {
+                  anime({
+                    targets: chip,
+                    opacity: 0,
+                    duration: 200,
+                    easing: 'easeInQuad'
+                  });
+                }
+
                 anime({
-                  targets: chip,
+                  targets: initOverlay,
                   opacity: 0,
-                  duration: 600,
+                  duration: 500,
                   easing: 'easeInOutQuad',
-                  begin: () => {
-                    console.log('Chip fade started');
-                  },
                   complete: () => {
-                    chip.style.display = 'none';
-                    console.log('Chip completely hidden');
+                    window.location.href = 'editpdf.html';
                   }
                 });
-              } else {
-                console.log('Chip already hidden or not found');
-              }
-            }
+              };
 
-            // 4. Play Video
-            video.play().then(() => {
-              console.log('Video play successful, currentTime:', video.currentTime);
-            }).catch(err => {
-              console.error('Video play failed:', err);
-            });
+              initOverlay.addEventListener('click', skipVideo);
 
-            // 5. Skip functionality
-            const skipVideo = () => {
-              console.log('Skip triggered');
-              video.pause();
-              video.ontimeupdate = null;
+              // 6. Video end handler
+              video.onended = () => {
+                console.log('Video ended');
+                initOverlay.removeEventListener('click', skipVideo);
+                video.ontimeupdate = null;
 
-              const chip = document.getElementById('skip-chip');
-              if (chip && chip.style.display !== 'none') {
                 anime({
-                  targets: chip,
+                  targets: initOverlay,
                   opacity: 0,
-                  duration: 200,
-                  easing: 'easeInQuad'
+                  duration: 700,
+                  easing: 'easeInOutQuad',
+                  complete: () => {
+                    window.location.href = 'editpdf.html';
+                  }
                 });
-              }
-
-              anime({
-                targets: initOverlay,
-                opacity: 0,
-                duration: 500,
-                easing: 'easeInOutQuad',
-                complete: () => {
-                  window.location.href = 'editpdf.html';
-                }
-              });
-            };
-
-            initOverlay.addEventListener('click', skipVideo);
-
-            // 6. Video end handler
-            video.onended = () => {
-              console.log('Video ended');
-              initOverlay.removeEventListener('click', skipVideo);
-              video.ontimeupdate = null;
-
-              anime({
-                targets: initOverlay,
-                opacity: 0,
-                duration: 700,
-                easing: 'easeInOutQuad',
-                complete: () => {
-                  window.location.href = 'editpdf.html';
-                }
-              });
-            };
-          }
-        });
-      }
+              };
+            }
+          });
+        }
+      });
     });
-  });
   </script>
 </body>
 </html>

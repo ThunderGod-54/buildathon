@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 /* 🔑 Your API Key */
-const GEMINI_API_KEY = "apikey daal de";
+const GEMINI_API_KEY = "api-key-here"; // Replace with your actual API key
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 

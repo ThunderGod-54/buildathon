@@ -171,33 +171,25 @@ themeToggle.addEventListener("click", () => {
 
   // Fade icons using opacity
   if (document.body.classList.contains("dark-theme")) {
-    sunIcon.style.opacity = "0";
-    moonIcon.style.opacity = "1";
-  } else {
-    sunIcon.style.opacity = "1";
+    // We are NOW in Dark Mode -> Show Sun icon to allow switching to light
     moonIcon.style.opacity = "0";
+    moonIcon.style.display = "none";
+
+    sunIcon.style.display = "block";
+    setTimeout(() => (sunIcon.style.opacity = "1"), 10);
+  } else {
+    // We are NOW in Light Mode -> Show Moon icon to allow switching to dark
+    sunIcon.style.opacity = "0";
+    sunIcon.style.display = "none";
+
+    moonIcon.style.display = "block";
+    setTimeout(() => (moonIcon.style.opacity = "1"), 10);
   }
 
   // Remove animation class after animation completes
   setTimeout(() => {
     themeToggle.classList.remove("animate");
   }, 600);
-  // Updated Fade + Display logic
-  if (document.body.classList.contains("dark-theme")) {
-    // Hide Sun, Show Moon
-    sunIcon.style.display = "none";
-    sunIcon.style.opacity = "0";
-
-    moonIcon.style.display = "block";
-    setTimeout(() => (moonIcon.style.opacity = "1"), 10);
-  } else {
-    // Hide Moon, Show Sun
-    moonIcon.style.display = "none";
-    moonIcon.style.opacity = "0";
-
-    sunIcon.style.display = "block";
-    setTimeout(() => (sunIcon.style.opacity = "1"), 10);
-  }
 });
 
 // Show skeleton loader

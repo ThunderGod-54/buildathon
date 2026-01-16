@@ -156,8 +156,6 @@ viewer.addEventListener("touchend", (e) => {
 });
 
 // Theme Toggle
-// Theme Toggle
-
 const themeToggle = document.getElementById("themeToggle");
 const sunIcon = document.getElementById("sunIcon");
 const moonIcon = document.getElementById("moonIcon");
@@ -186,6 +184,9 @@ themeToggle.addEventListener("click", () => {
     moonIcon.style.display = "block";
     setTimeout(() => (moonIcon.style.opacity = "1"), 10);
   }
+
+  // Dispatch theme changed event
+  document.dispatchEvent(new Event('themeChanged'));
 
   // Remove animation class after animation completes
   setTimeout(() => {
@@ -654,6 +655,55 @@ function updateMarkerPosition(pageNum, oldX, oldY, newX, newY) {
     marker.y = Math.round(newY);
   }
 }
+
+function deleteMarker(m, wrap) {
+  const pageNum = parseInt(wrap.id.split("-")[1]);
+  const markerX = parseInt(m.style.left) + 12;
+  const markerY = parseInt(m.style.top) + 12;
+
+  // Remove from pageMarkers array
+  if (pageMarkers[pageNum]) {
+    pageMarkers[pageNum] = pageMarkers[pageNum].filter(
+      (mark) => !(Math.abs(mark.x - markerX) < 5 && Math.abs(mark.y - markerY) < 5)
+    );
+  }
+
+  // Remove from DOM
+  m.remove();
+
+  // Close the popup
+  const popup = wrap.querySelector(".note-popup");
+  if (popup) popup.remove();
+
+  // Update status
+  statusMsg.textContent = "Marker deleted!";
+  statusMsg.style.color = "#dc3545";
+}
+
+function openDeleteModal(m, wrap) {
+  // Store the marker and wrap for deletion
+  window.markerToDelete = m;
+  window.wrapToDelete = wrap;
+
+  const modal = document.getElementById("deleteModal");
+  modal.classList.add("active");
+}
+
+function closeDeleteModal() {
+  const modal = document.getElementById("deleteModal");
+  modal.classList.remove("active");
+  window.markerToDelete = null;
+  window.wrapToDelete = null;
+}
+
+function confirmDelete() {
+  if (window.markerToDelete && window.wrapToDelete) {
+    deleteMarker(window.markerToDelete, window.wrapToDelete);
+    closeDeleteModal();
+  }
+}
+
+
 function revealMarker(m, wrap) {
   const existing = wrap.querySelector(".note-popup");
   if (existing) existing.remove();
@@ -680,12 +730,21 @@ function revealMarker(m, wrap) {
           </svg>
           Hidden Text:
         </span>
-        <button id="copyBtn" title="Copy Text" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;">
-          <svg id="copyIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: black; transition: all 0.2s;">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-        </button>
+        <div style="display: flex; gap: 5px;">
+          <button id="copyBtn" title="Copy Text" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;">
+            <svg id="copyIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: black; transition: all 0.2s;">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+          </button>
+          <button id="deleteBtn" title="Delete Marker" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: black;">
+              <path d="M3 6h18"></path>
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="note-popup-content" style="padding: 15px; min-height: 60px; color: black;">${content}</div>
     `;
@@ -707,6 +766,13 @@ function revealMarker(m, wrap) {
         }, 2000);
       });
     };
+
+    // Delete Button logic
+    const deleteBtn = display.querySelector("#deleteBtn");
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      openDeleteModal(m, wrap);
+    };
   } else if (type === "image") {
     const blob = new Blob([content], { type: "image/jpeg" });
     const url = URL.createObjectURL(blob);
@@ -720,7 +786,7 @@ function revealMarker(m, wrap) {
       marker && marker.size ? marker.size : { width: 250, height: 250 };
 
     display.innerHTML = `
-      <div class="note-popup-header" style="display: flex; align-items: center; padding: 10px 15px; padding-right: 45px;">
+      <div class="note-popup-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; padding-right: 45px;">
         <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: black;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
@@ -729,6 +795,13 @@ function revealMarker(m, wrap) {
           </svg>
           Hidden Image:
         </span>
+        <button id="deleteBtn" title="Delete Marker" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: black;">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+        </button>
       </div>
       <div class="note-popup-content" style="width:${savedSize.width}px; height:${savedSize.height}px; overflow: hidden; resize: both; cursor: nwse-resize;">
         <img src="${url}" style="width: 100%; height: 100%; object-fit: contain; pointer-events: none;">
@@ -754,11 +827,20 @@ function revealMarker(m, wrap) {
         };
       }
     }, 0);
+
+    // Delete Button logic
+    setTimeout(() => {
+      const deleteBtn = display.querySelector("#deleteBtn");
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        openDeleteModal(m, wrap);
+      };
+    }, 0);
   } else if (type === "audio") {
     const blob = new Blob([content], { type: "audio/webm" });
     const url = URL.createObjectURL(blob);
     display.innerHTML = `
-      <div class="note-popup-header" style="display: flex; align-items: center; padding: 10px 15px; padding-right: 45px;">
+      <div class="note-popup-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; padding-right: 45px;">
         <span style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: black;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -768,6 +850,13 @@ function revealMarker(m, wrap) {
           </svg>
           Hidden Audio:
         </span>
+        <button id="deleteBtn" title="Delete Marker" style="background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: black;">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+          </svg>
+        </button>
       </div>
       <div class="note-popup-content" style="padding: 15px;">
         <audio src="${url}" controls style="width:250px; height:40px;"></audio>
@@ -792,6 +881,15 @@ function revealMarker(m, wrap) {
           display.remove(); // Close the popup after sending
         };
       }
+    }, 0);
+
+    // Delete Button logic
+    setTimeout(() => {
+      const deleteBtn = display.querySelector("#deleteBtn");
+      deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        openDeleteModal(m, wrap);
+      };
     }, 0);
   }
 
@@ -1328,7 +1426,10 @@ function sendImageToChatbot(blob, url) {
     // Add the image message to chatbot
     window.chatbotInstance.addImageMessage(url, blob);
 
-    statusMsg.textContent = "Image sent to chatbot!";
+    // Send a default message to trigger multimodal response
+    window.chatbotInstance.sendDefaultMessage("Analyze this image and provide insights.");
+
+    statusMsg.textContent = "Image sent to chatbot with multimodal input!";
     statusMsg.style.color = "#28a745";
   } else {
     statusMsg.textContent = "Chatbot not available";

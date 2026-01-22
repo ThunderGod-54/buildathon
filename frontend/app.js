@@ -272,10 +272,10 @@ async function handlePdfLoad(file, successMsg, isViewMode = false) {
 
       if (isViewMode) {
         if (found) {
-          statusMsg.textContent = "Hidden data found and loaded!";
+          statusMsg.textContent = "Data found and loaded!";
           statusMsg.style.color = "#28a745";
         } else {
-          statusMsg.textContent = "No hidden data found in this PDF.";
+          statusMsg.textContent = "No data found in this PDF.";
           statusMsg.style.color = "#dc3545";
         }
       } else {

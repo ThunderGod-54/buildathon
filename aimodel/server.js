@@ -1,60 +1,83 @@
 import express from "express";
 import cors from "cors";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import path from "path";
-import { fileURLToPath } from "url";
-import "dotenv/config";
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-// Serve static files from the 'frontend' directory at the root level
-app.use(express.static(path.join(__dirname, "../frontend")));
+/* 🔑 Your API Key */
+const GEMINI_API_KEY = "Api_key_here";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-app.post("/api/chat", async (req, res) => {
+/* ✅ GEMINI 2.5 FLASH is the best stable free-tier model right now */
+const model = genAI.getGenerativeModel({
+    model: "gemini-2.5-flash"
+});
+
+app.post("/chat", async (req, res) => {
     try {
         const { message, context } = req.body;
-        if (!message) return res.status(400).json({ reply: "Empty message" });
 
-        const contents = [
-            { text: "You are a helpful assistant. Use Markdown for structure." }
-        ];
+        if (!message) {
+            return res.status(400).json({ reply: "Empty message" });
+        }
 
+        // Build multimodal content
+        const contents = [];
+
+        // Add system prompt
+        contents.push({ text: "You are a helpful assistant. Always structure your responses with clear formatting: Use **bold** for titles and important headings, add line breaks for paragraphs, use bullet points or numbered lists where appropriate, and ensure proper spacing for readability. Format your response in Markdown for better structure." });
+
+        // Process context
         if (Array.isArray(context)) {
-            context.forEach(item => {
+            for (const item of context) {
                 if (item.startsWith("Image File:")) {
+                    // Extract base64 data
                     const base64Match = item.match(/Base64 Data: (data:image\/[^;]+;base64,[^"]+)/);
                     if (base64Match) {
                         const base64Data = base64Match[1];
+                        const mimeType = base64Data.split(';')[0].split(':')[1];
+                        const data = base64Data.split(',')[1];
                         contents.push({
                             inlineData: {
-                                mimeType: base64Data.split(';')[0].split(':')[1],
-                                data: base64Data.split(',')[1]
+                                mimeType: mimeType,
+                                data: data
                             }
                         });
                     }
                 } else {
+                    // Add as text
                     contents.push({ text: item });
                 }
-            });
+            }
         }
 
+        // Add user message
         contents.push({ text: `User: ${message}` });
+
         const result = await model.generateContent(contents);
-        res.json({ reply: (await result.response).text() });
+        const response = await result.response;
+        const reply = response.text();
+
+        res.json({ reply });
     } catch (err) {
+        // Detailed logging for development
         console.error("🔥 GEMINI ERROR:", err);
-        res.status(500).json({ reply: "Server Error" });
+
+        if (err.status === 429) {
+            return res.status(429).json({ reply: "Rate limit reached. Please wait a minute." });
+        }
+
+        res.status(500).json({
+            reply: "Gemini API error. Please check your console."
+        });
     }
 });
 
-// For Vercel, we export the app instead of calling app.listen()
-export default app;
+app.listen(PORT, () => {
+    console.log(`✅ Server running → http://localhost:${PORT}`);
+});
